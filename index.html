@@ -466,8 +466,9 @@
 
     .name-input {
       flex: 1;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.85rem;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1rem;
       padding: 10px 14px;
       border: 1px solid var(--line);
       border-radius: 4px;
@@ -880,7 +881,7 @@
       // Player name (top right)
       if (name) {
         ctx.textAlign = 'right';
-        ctx.font = '13px "Space Mono", monospace';
+        ctx.font = 'italic 16px "Playfair Display", Georgia, serif';
         ctx.fillStyle = '#7a7269';
         ctx.fillText(name, W - 36, 44);
       }
@@ -907,22 +908,14 @@
 
       // Add QR code next to Total Time
       if (typeof QRious !== 'undefined') {
-        const qrSize = 76;
+        const qrSize = 100;
         const qrX = timeCenterX + 120; // 120px to the right of the center of the time text
-        const qrY = 90;
-
-        // Border behind QR code
-        ctx.fillStyle = '#ffffff';
-        ctx.strokeStyle = '#d0c8be';
-        ctx.lineWidth = 1;
-        roundRect(ctx, qrX - 4, qrY - 4, qrSize + 8, qrSize + 8, 4);
-        ctx.fill();
-        ctx.stroke();
+        const qrY = 80;
 
         const qr = new QRious({
           value: 'https://roeesch.github.io/note_flash/',
           size: qrSize,
-          background: '#ffffff',
+          background: '#f7f5f2',
           foreground: '#1a1714',
           level: 'M'
         });
@@ -933,7 +926,7 @@
         ctx.font = '9px "Space Mono", monospace';
         ctx.fillStyle = '#7a7269';
         ctx.letterSpacing = '0.05em';
-        ctx.fillText('SCAN TO PLAY', qrX + (qrSize / 2), qrY + qrSize + 16);
+        ctx.fillText('SCAN TO PLAY', qrX + (qrSize / 2), qrY + qrSize + 14);
       }
 
       // Three stat boxes
