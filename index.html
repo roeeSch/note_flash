@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -741,6 +742,34 @@ function generateCard() {
   ctx.font = 'italic 14px "Playfair Display", Georgia, serif';
   ctx.fillStyle = '#b8860b';
   ctx.fillText(quote, W / 2, H - 22);
+
+  // Add QR code to bottom right
+  if (typeof QRious !== 'undefined') {
+    const qrSize = 72;
+    const qrX = W - qrSize - 22;
+    const qrY = H - qrSize - 30;
+    
+    // Draw subtle border behind QR code
+    ctx.fillStyle = '#ffffff';
+    roundRect(ctx, qrX - 4, qrY - 4, qrSize + 8, qrSize + 8, 4);
+    ctx.fill();
+
+    const qr = new QRious({
+      value: 'https://roeesch.github.io/note_flash/',
+      size: qrSize,
+      background: '#ffffff',
+      foreground: '#1a1714',
+      level: 'M'
+    });
+    ctx.drawImage(qr.canvas, qrX, qrY);
+    
+    // Tiny label under QR
+    ctx.textAlign = 'center';
+    ctx.font = '9px "Space Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.letterSpacing = '0.05em';
+    ctx.fillText('SCAN TO PLAY', qrX + (qrSize/2), qrY + qrSize + 16);
+  }
 
   document.getElementById('sharePreview').classList.add('visible');
   // scroll into view smoothly
