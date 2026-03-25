@@ -848,12 +848,12 @@
       const name = document.getElementById('nameInput').value.trim();
       const acc = d.acc;
 
-      // Background — dark, musical feel
-      ctx.fillStyle = '#12100e';
+      // Background — light, matching the game
+      ctx.fillStyle = '#f7f5f2';
       ctx.fillRect(0, 0, W, H);
 
       // Subtle staff lines across full width (decorative)
-      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctx.strokeStyle = '#d0c8be';
       ctx.lineWidth = 1;
       const staffY = [160, 174, 188, 202, 216];
       staffY.forEach(y => { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); });
@@ -862,101 +862,62 @@
       ctx.fillStyle = '#b8860b';
       ctx.fillRect(0, 0, 5, H);
 
-      // Top-left: app name
-      ctx.fillStyle = '#b8860b';
+      // Top-left: app name (matching the game title)
       ctx.font = 'bold 18px "Space Mono", monospace';
       ctx.textAlign = 'left';
-      ctx.fillText('NOTE FLASH', 36, 44);
+      ctx.fillStyle = '#1a1714';
+      ctx.fillText('NOTE ', 36, 44);
+      const m1 = ctx.measureText('NOTE ');
+      ctx.fillStyle = '#b8860b';
+      ctx.fillText('FLASH', 36 + m1.width, 44);
 
       // Clef badge
       const clefLabel = (d.clef.charAt(0).toUpperCase() + d.clef.slice(1)) + ' Clef';
       ctx.font = '11px "Space Mono", monospace';
-      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.fillStyle = '#7a7269';
       ctx.fillText(clefLabel.toUpperCase(), 36, 64);
 
       // Player name (top right)
       if (name) {
         ctx.textAlign = 'right';
         ctx.font = '13px "Space Mono", monospace';
-        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fillStyle = '#7a7269';
         ctx.fillText(name, W - 36, 44);
       }
 
-      // Big time — center
+      // Center metrics — Shifted slightly left to make room for QR code
+      const timeCenterX = W / 2 - 80;
+
+      // Big time
       ctx.textAlign = 'center';
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = '#1a1714';
       ctx.font = 'bold 96px "Playfair Display", Georgia, serif';
-      ctx.fillText(d.totalSec.toFixed(1) + 's', W / 2, 160);
+      ctx.fillText(d.totalSec.toFixed(1) + 's', timeCenterX, 160);
 
       // "Total time" label
       ctx.font = '12px "Space Mono", monospace';
-      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.fillStyle = '#7a7269';
       ctx.letterSpacing = '0.2em';
-      ctx.fillText('TOTAL TIME', W / 2, 186);
+      ctx.fillText('TOTAL TIME', timeCenterX, 186);
       if (d.penaltyMs > 0) {
         ctx.font = '11px "Space Mono", monospace';
         ctx.fillStyle = '#cc3333';
-        ctx.fillText(`(${d.rawSec.toFixed(1)}s + ${d.penaltyMs / 1000}s penalty)`, W / 2, 206);
+        ctx.fillText(`(${d.rawSec.toFixed(1)}s + ${d.penaltyMs / 1000}s penalty)`, timeCenterX, 206);
       }
 
-      // Three stat boxes
-      const boxes = [
-        { label: 'CORRECT', val: '15', color: '#2e8a52' },
-        { label: 'MISTAKES', val: String(d.wrongCount), color: d.wrongCount === 0 ? '#2e8a52' : '#cc3333' },
-        { label: 'PER NOTE', val: d.avg + 's', color: '#ffffff' },
-      ];
-      const boxW = 180, boxH = 82, boxY = 250, gap = 20;
-      const totalBoxW = boxes.length * boxW + (boxes.length - 1) * gap;
-      const startX = (W - totalBoxW) / 2;
-
-      boxes.forEach((box, i) => {
-        const bx = startX + i * (boxW + gap);
-        // box bg
-        ctx.fillStyle = 'rgba(255,255,255,0.05)';
-        roundRect(ctx, bx, boxY, boxW, boxH, 6);
-        ctx.fill();
-        // value
-        ctx.textAlign = 'center';
-        ctx.font = 'bold 34px "Playfair Display", Georgia, serif';
-        ctx.fillStyle = box.color;
-        ctx.fillText(box.val, bx + boxW / 2, boxY + 42);
-        // label
-        ctx.font = '10px "Space Mono", monospace';
-        ctx.fillStyle = 'rgba(255,255,255,0.35)';
-        ctx.fillText(box.label, bx + boxW / 2, boxY + 62);
-      });
-
-      // Accuracy bar
-      const barX = startX, barY = 352, barW = totalBoxW, barH = 8;
-      ctx.fillStyle = 'rgba(255,255,255,0.08)';
-      roundRect(ctx, barX, barY, barW, barH, 4); ctx.fill();
-      ctx.fillStyle = acc === 100 ? '#2e8a52' : acc >= 70 ? '#b8860b' : '#cc3333';
-      roundRect(ctx, barX, barY, barW * (acc / 100), barH, 4); ctx.fill();
-
-      ctx.textAlign = 'left';
-      ctx.font = '10px "Space Mono", monospace';
-      ctx.fillStyle = 'rgba(255,255,255,0.35)';
-      ctx.fillText('ACCURACY', barX, barY - 8);
-      ctx.textAlign = 'right';
-      ctx.fillText(acc + '%', barX + barW, barY - 8);
-
-      // Rating quote bottom
-      const quote = ratingText(d.totalSec, d.wrongCount);
-      ctx.textAlign = 'center';
-      ctx.font = 'italic 14px "Playfair Display", Georgia, serif';
-      ctx.fillStyle = '#b8860b';
-      ctx.fillText(quote, W / 2, H - 22);
-
-      // Add QR code to bottom right
+      // Add QR code next to Total Time
       if (typeof QRious !== 'undefined') {
-        const qrSize = 72;
-        const qrX = W - qrSize - 22;
-        const qrY = H - qrSize - 30;
+        const qrSize = 76;
+        const qrX = timeCenterX + 120; // 120px to the right of the center of the time text
+        const qrY = 90;
 
-        // Draw subtle border behind QR code
+        // Border behind QR code
         ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#d0c8be';
+        ctx.lineWidth = 1;
         roundRect(ctx, qrX - 4, qrY - 4, qrSize + 8, qrSize + 8, 4);
         ctx.fill();
+        ctx.stroke();
 
         const qr = new QRious({
           value: 'https://roeesch.github.io/note_flash/',
@@ -970,10 +931,61 @@
         // Tiny label under QR
         ctx.textAlign = 'center';
         ctx.font = '9px "Space Mono", monospace';
-        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.fillStyle = '#7a7269';
         ctx.letterSpacing = '0.05em';
         ctx.fillText('SCAN TO PLAY', qrX + (qrSize / 2), qrY + qrSize + 16);
       }
+
+      // Three stat boxes
+      const boxes = [
+        { label: 'CORRECT', val: '15', color: '#2e8a52' },
+        { label: 'MISTAKES', val: String(d.wrongCount), color: d.wrongCount === 0 ? '#2e8a52' : '#cc3333' },
+        { label: 'PER NOTE', val: d.avg + 's', color: '#1a1714' },
+      ];
+      const boxW = 180, boxH = 82, boxY = 250, gap = 20;
+      const totalBoxW = boxes.length * boxW + (boxes.length - 1) * gap;
+      const startX = (W - totalBoxW) / 2;
+
+      boxes.forEach((box, i) => {
+        const bx = startX + i * (boxW + gap);
+        // box bg
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#d0c8be';
+        ctx.lineWidth = 1;
+        roundRect(ctx, bx, boxY, boxW, boxH, 6);
+        ctx.fill();
+        ctx.stroke();
+        // value
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 34px "Playfair Display", Georgia, serif';
+        ctx.fillStyle = box.color;
+        ctx.fillText(box.val, bx + boxW / 2, boxY + 42);
+        // label
+        ctx.font = '10px "Space Mono", monospace';
+        ctx.fillStyle = '#7a7269';
+        ctx.fillText(box.label, bx + boxW / 2, boxY + 62);
+      });
+
+      // Accuracy bar
+      const barX = startX, barY = 352, barW = totalBoxW, barH = 8;
+      ctx.fillStyle = '#e8e4dc'; // slightly darker than bg for the track
+      roundRect(ctx, barX, barY, barW, barH, 4); ctx.fill();
+      ctx.fillStyle = acc === 100 ? '#2e8a52' : acc >= 70 ? '#b8860b' : '#cc3333';
+      roundRect(ctx, barX, barY, barW * (acc / 100), barH, 4); ctx.fill();
+
+      ctx.textAlign = 'left';
+      ctx.font = '10px "Space Mono", monospace';
+      ctx.fillStyle = '#7a7269';
+      ctx.fillText('ACCURACY', barX, barY - 8);
+      ctx.textAlign = 'right';
+      ctx.fillText(acc + '%', barX + barW, barY - 8);
+
+      // Rating quote bottom
+      const quote = ratingText(d.totalSec, d.wrongCount);
+      ctx.textAlign = 'center';
+      ctx.font = 'italic 14px "Playfair Display", Georgia, serif';
+      ctx.fillStyle = '#b8860b';
+      ctx.fillText(quote, W / 2, H - 22);
 
       document.getElementById('sharePreview').classList.add('visible');
       // scroll into view smoothly
