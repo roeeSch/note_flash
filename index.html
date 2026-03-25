@@ -585,6 +585,22 @@
       border-color: var(--ink);
       color: var(--ink);
     }
+
+    .ad-banner {
+      margin-top: 40px;
+      width: min(320px, 90vw);
+      height: 50px;
+      background: rgba(0, 0, 0, 0.02);
+      border: 1px dashed var(--line);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.55rem;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
   </style>
 </head>
 
@@ -603,6 +619,11 @@
       <button class="clef-btn" id="sBtnBass" onclick="setClef('bass')">Bass</button>
     </div>
     <button class="primary-btn" onclick="startGame()">Start</button>
+
+    <!-- ADVERTISEMENT PLACEHOLDER -->
+    <div class="ad-banner">
+      Advertisement
+    </div>
   </div>
 
   <!-- GAME -->
@@ -679,6 +700,11 @@
 
     <div class="bottom-btns">
       <button class="ghost-btn" onclick="resetGame()">Play Again</button>
+    </div>
+
+    <!-- ADVERTISEMENT PLACEHOLDER -->
+    <div class="ad-banner" style="margin-top: 20px;">
+      Advertisement
     </div>
   </div>
 
