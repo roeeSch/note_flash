@@ -586,20 +586,38 @@
       color: var(--ink);
     }
 
-    .ad-banner {
-      margin-top: 40px;
+    #adOverlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    #adOverlay.active { display: flex; }
+    .mock-ad {
       width: min(320px, 90vw);
-      height: 50px;
-      background: rgba(0, 0, 0, 0.02);
-      border: 1px dashed var(--line);
-      border-radius: 4px;
+      height: 250px;
+      background: #1a1714;
+      border: 1px dashed #d0c8be;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.55rem;
-      color: var(--muted);
-      letter-spacing: 0.15em;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+      color: #7a7269;
       text-transform: uppercase;
+      text-align: center;
+      padding: 20px;
+    }
+    .ad-timer {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.2rem;
+      color: #b8860b;
     }
   </style>
 </head>
@@ -619,11 +637,6 @@
       <button class="clef-btn" id="sBtnBass" onclick="setClef('bass')">Bass</button>
     </div>
     <button class="primary-btn" onclick="startGame()">Start</button>
-
-    <!-- ADVERTISEMENT PLACEHOLDER -->
-    <div class="ad-banner">
-      Advertisement
-    </div>
   </div>
 
   <!-- GAME -->
@@ -701,11 +714,12 @@
     <div class="bottom-btns">
       <button class="ghost-btn" onclick="resetGame()">Play Again</button>
     </div>
+  </div>
 
-    <!-- ADVERTISEMENT PLACEHOLDER -->
-    <div class="ad-banner" style="margin-top: 20px;">
-      Advertisement
-    </div>
+  <!-- INTERSTITIAL AD PLACEHOLDER -->
+  <div id="adOverlay">
+    <div class="mock-ad">Your 5-Second Video Ad Placeholder</div>
+    <div class="ad-timer" id="adTimer">Reward in 5...</div>
   </div>
 
   <script>
@@ -1026,13 +1040,32 @@
     }
 
     function downloadCard() {
-      const canvas = document.getElementById('shareCanvas');
-      const name = document.getElementById('nameInput').value.trim();
-      const slug = name ? name.replace(/\s+/g, '-').toLowerCase() + '-' : '';
-      const link = document.createElement('a');
-      link.download = `noteflash-${slug}result.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+      const overlay = document.getElementById('adOverlay');
+      const timerEl = document.getElementById('adTimer');
+      overlay.classList.add('active');
+      
+      let timeLeft = 5;
+      timerEl.textContent = `Downloading in ${timeLeft}...`;
+      
+      // We simulate an ad network's callback timer
+      const interval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          timerEl.textContent = `Downloading in ${timeLeft}...`;
+        } else {
+          clearInterval(interval);
+          overlay.classList.remove('active');
+          
+          // Reward: actually trigger the download
+          const canvas = document.getElementById('shareCanvas');
+          const name = document.getElementById('nameInput').value.trim();
+          const slug = name ? name.replace(/\s+/g, '-').toLowerCase() + '-' : '';
+          const link = document.createElement('a');
+          link.download = `noteflash-${slug}result.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        }
+      }, 1000);
     }
 
     // DRAWING (staff)
