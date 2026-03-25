@@ -1,884 +1,1089 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Note Flash Test</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ffffff">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note Flash Test</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  :root {
-    --bg: #ffffff;
-    --card-bg: #f7f5f2;
-    --gold: #b8860b;
-    --ink: #1a1714;
-    --muted: #7a7269;
-    --correct: #2e8a52;
-    --wrong: #cc3333;
-    --line: #d0c8be;
-  }
+    :root {
+      --bg: #ffffff;
+      --card-bg: #f7f5f2;
+      --gold: #b8860b;
+      --ink: #1a1714;
+      --muted: #7a7269;
+      --correct: #2e8a52;
+      --wrong: #cc3333;
+      --line: #d0c8be;
+    }
 
-  body {
-    font-family: 'Space Mono', monospace;
-    background: var(--bg);
-    color: var(--ink);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
+    body {
+      font-family: 'Space Mono', monospace;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
 
-  .screen { display: none; flex-direction: column; align-items: center; width: 100%; }
-  .screen.active { display: flex; }
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
 
-  /* ── START ── */
-  .big-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 7vw, 3rem);
-    font-weight: 900;
-    letter-spacing: 0.04em;
-    margin-bottom: 6px;
-    text-align: center;
-  }
-  .big-title span { color: var(--gold); }
+    .screen.active {
+      display: flex;
+    }
 
-  .tagline {
-    font-size: 0.62rem;
-    color: var(--muted);
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    margin-bottom: 40px;
-    text-align: center;
-  }
+    /* ── START ── */
+    .big-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 7vw, 3rem);
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+      text-align: center;
+    }
 
-  .start-info {
-    font-size: 0.74rem;
-    color: var(--muted);
-    letter-spacing: 0.06em;
-    line-height: 2;
-    margin-bottom: 32px;
-    text-align: center;
-  }
-  .start-info b { color: var(--ink); }
+    .big-title span {
+      color: var(--gold);
+    }
 
-  .clef-toggle { display: flex; gap: 8px; margin-bottom: 32px; }
+    .tagline {
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+      text-align: center;
+    }
 
-  .clef-btn {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 8px 22px;
-    border: 1px solid var(--line);
-    border-radius: 2px;
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .clef-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(184,134,11,0.04); }
+    .start-info {
+      font-size: 0.74rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      line-height: 2;
+      margin-bottom: 32px;
+      text-align: center;
+    }
 
-  .primary-btn {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    padding: 15px 50px;
-    background: var(--ink);
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    letter-spacing: 0.08em;
-    transition: background 0.15s, transform 0.1s;
-  }
-  .primary-btn:hover  { background: #2e2924; }
-  .primary-btn:active { transform: scale(0.97); }
+    .start-info b {
+      color: var(--ink);
+    }
 
-  /* ── GAME ── */
-  .topbar {
-    display: flex;
-    align-items: center;
-    width: min(420px, 90vw);
-    margin-bottom: 14px;
-    gap: 16px;
-  }
+    .clef-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
 
-  .timer-display {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.9rem;
-    font-weight: 700;
-    color: var(--ink);
-    min-width: 76px;
-    letter-spacing: 0.02em;
-  }
+    .clef-btn {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 8px 22px;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
 
-  .progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .clef-btn.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(184, 134, 11, 0.04);
+    }
 
-  .progress-meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.6rem;
-    color: var(--muted);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-  .progress-meta .mistakes b { color: var(--wrong); }
+    .primary-btn {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding: 15px 50px;
+      background: var(--ink);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      transition: background 0.15s, transform 0.1s;
+    }
 
-  .progress-track {
-    width: 100%;
-    height: 7px;
-    background: var(--line);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--ink);
-    border-radius: 4px;
-    transition: width 0.3s ease;
-  }
+    .primary-btn:hover {
+      background: #2e2924;
+    }
 
-  .staff-card {
-    width: min(420px, 90vw);
-    height: 220px;
-    background: var(--card-bg);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: visible;
-  }
-  .staff-card.flash-correct { animation: fCorrect 0.45s ease; }
-  .staff-card.flash-wrong   { animation: fWrong   0.45s ease; }
+    .primary-btn:active {
+      transform: scale(0.97);
+    }
 
-  @keyframes fCorrect {
-    0%,100% { border-color: var(--line); box-shadow: none; }
-    40%      { border-color: var(--correct); box-shadow: 0 0 36px 4px rgba(46,138,82,0.18); }
-  }
-  @keyframes fWrong {
-    0%,100% { border-color: var(--line); box-shadow: none; }
-    40%      { border-color: var(--wrong); box-shadow: 0 0 36px 4px rgba(204,51,51,0.18); }
-  }
+    /* ── GAME ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      width: min(420px, 90vw);
+      margin-bottom: 14px;
+      gap: 16px;
+    }
 
-  svg.staff { width: 100%; height: 100%; overflow: visible; }
+    .timer-display {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--ink);
+      min-width: 76px;
+      letter-spacing: 0.02em;
+    }
 
-  .answers {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    width: min(420px, 90vw);
-    margin-bottom: 10px;
-  }
-  .ans-btn {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    padding: 15px 8px;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    background: var(--card-bg);
-    color: var(--ink);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .ans-btn:hover  { border-color: var(--gold); color: var(--gold); }
-  .ans-btn:active { transform: scale(0.96); }
-  .ans-btn.correct { border-color: var(--correct); color: var(--correct); background: rgba(46,138,82,0.07); }
-  .ans-btn.wrong   { border-color: var(--wrong);   color: var(--wrong);   background: rgba(204,51,51,0.07); }
+    .progress-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
 
-  .feedback { font-size: 0.68rem; letter-spacing: 0.1em; height: 16px; color: var(--muted); text-align: center; }
-  .feedback.ok  { color: var(--correct); }
-  .feedback.err { color: var(--wrong); }
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
 
-  /* ── FINISH ── */
-  #finishScreen { animation: fadeUp 0.5s ease; }
-  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+    .progress-meta .mistakes b {
+      color: var(--wrong);
+    }
 
-  .finish-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.6rem, 5vw, 2.2rem);
-    font-weight: 900;
-    margin-bottom: 4px;
-    text-align: center;
-  }
-  .finish-sub {
-    font-size: 0.58rem; color: var(--muted); letter-spacing: 0.22em;
-    text-transform: uppercase; margin-bottom: 28px; text-align: center;
-  }
+    .progress-track {
+      width: 100%;
+      height: 7px;
+      background: var(--line);
+      border-radius: 4px;
+      overflow: hidden;
+    }
 
-  .big-time {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(3.5rem, 13vw, 5.5rem);
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    margin-bottom: 2px;
-    text-align: center;
-  }
-  .time-label {
-    font-size: 0.58rem; color: var(--muted); letter-spacing: 0.22em;
-    text-transform: uppercase; margin-bottom: 28px; text-align: center;
-  }
+    .progress-fill {
+      height: 100%;
+      background: var(--ink);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
 
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--line);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    overflow: hidden;
-    width: min(380px, 88vw);
-    margin-bottom: 24px;
-  }
-  .stat-cell { background: var(--bg); padding: 16px 10px; text-align: center; }
-  .stat-val {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.9rem; font-weight: 700;
-    display: block; margin-bottom: 4px; color: var(--ink);
-  }
-  .stat-val.good { color: var(--correct); }
-  .stat-val.bad  { color: var(--wrong); }
-  .stat-lbl { font-size: 0.56rem; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
+    .staff-card {
+      width: min(420px, 90vw);
+      height: 220px;
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+    }
 
-  .acc-wrap { width: min(380px, 88vw); margin-bottom: 20px; }
-  .acc-meta {
-    display: flex; justify-content: space-between;
-    font-size: 0.58rem; color: var(--muted); letter-spacing: 0.12em;
-    text-transform: uppercase; margin-bottom: 8px;
-  }
-  .acc-track { width: 100%; height: 10px; background: rgba(204,51,51,0.12); border-radius: 5px; overflow: hidden; }
-  .acc-fill  { height: 100%; background: var(--correct); border-radius: 5px; transition: width 1s ease; }
+    .staff-card.flash-correct {
+      animation: fCorrect 0.45s ease;
+    }
 
-  .rating {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem; font-style: italic;
-    color: var(--gold); margin-bottom: 28px; text-align: center;
-  }
+    .staff-card.flash-wrong {
+      animation: fWrong 0.45s ease;
+    }
 
-  /* ── SHARE SECTION ── */
-  .share-divider {
-    width: min(380px, 88vw);
-    height: 1px;
-    background: var(--line);
-    margin-bottom: 20px;
-  }
+    @keyframes fCorrect {
 
-  .share-label {
-    font-size: 0.58rem;
-    color: var(--muted);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    text-align: center;
-  }
+      0%,
+      100% {
+        border-color: var(--line);
+        box-shadow: none;
+      }
 
-  .name-row {
-    display: flex;
-    gap: 8px;
-    width: min(380px, 88vw);
-    margin-bottom: 14px;
-  }
+      40% {
+        border-color: var(--correct);
+        box-shadow: 0 0 36px 4px rgba(46, 138, 82, 0.18);
+      }
+    }
 
-  .name-input {
-    flex: 1;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.85rem;
-    padding: 10px 14px;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    background: var(--card-bg);
-    color: var(--ink);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .name-input:focus { border-color: var(--gold); }
-  .name-input::placeholder { color: var(--muted); }
+    @keyframes fWrong {
 
-  .generate-btn {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 10px 18px;
-    border: 1px solid var(--ink);
-    border-radius: 4px;
-    background: transparent;
-    color: var(--ink);
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-  .generate-btn:hover { background: var(--ink); color: #fff; }
-  .generate-btn:active { transform: scale(0.97); }
+      0%,
+      100% {
+        border-color: var(--line);
+        box-shadow: none;
+      }
 
-  /* Share card preview */
-  .share-preview {
-    width: min(380px, 88vw);
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-  .share-preview.visible { display: flex; }
+      40% {
+        border-color: var(--wrong);
+        box-shadow: 0 0 36px 4px rgba(204, 51, 51, 0.18);
+      }
+    }
 
-  .share-canvas-wrap {
-    width: 100%;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  }
+    svg.staff {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
 
-  #shareCanvas { width: 100%; display: block; }
+    .answers {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      width: min(420px, 90vw);
+      margin-bottom: 10px;
+    }
 
-  .download-btn {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    font-weight: 700;
-    padding: 13px 40px;
-    background: var(--gold);
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    letter-spacing: 0.08em;
-    transition: background 0.15s, transform 0.1s;
-  }
-  .download-btn:hover  { background: #9a6f09; }
-  .download-btn:active { transform: scale(0.97); }
+    .ans-btn {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      padding: 15px 8px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--card-bg);
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
 
-  .bottom-btns {
-    display: flex;
-    gap: 10px;
-    margin-top: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+    .ans-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
 
-  .ghost-btn {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 11px 24px;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .ghost-btn:hover { border-color: var(--ink); color: var(--ink); }
-</style>
+    .ans-btn:active {
+      transform: scale(0.96);
+    }
+
+    .ans-btn.correct {
+      border-color: var(--correct);
+      color: var(--correct);
+      background: rgba(46, 138, 82, 0.07);
+    }
+
+    .ans-btn.wrong {
+      border-color: var(--wrong);
+      color: var(--wrong);
+      background: rgba(204, 51, 51, 0.07);
+    }
+
+    .feedback {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      height: 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .feedback.ok {
+      color: var(--correct);
+    }
+
+    .feedback.err {
+      color: var(--wrong);
+    }
+
+    /* ── FINISH ── */
+    #finishScreen {
+      animation: fadeUp 0.5s ease;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .finish-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      font-weight: 900;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    .finish-sub {
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .big-time {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.5rem, 13vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin-bottom: 2px;
+      text-align: center;
+    }
+
+    .time-label {
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      overflow: hidden;
+      width: min(380px, 88vw);
+      margin-bottom: 24px;
+    }
+
+    .stat-cell {
+      background: var(--bg);
+      padding: 16px 10px;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+    }
+
+    .stat-val.good {
+      color: var(--correct);
+    }
+
+    .stat-val.bad {
+      color: var(--wrong);
+    }
+
+    .stat-lbl {
+      font-size: 0.56rem;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .acc-wrap {
+      width: min(380px, 88vw);
+      margin-bottom: 20px;
+    }
+
+    .acc-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .acc-track {
+      width: 100%;
+      height: 10px;
+      background: rgba(204, 51, 51, 0.12);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .acc-fill {
+      height: 100%;
+      background: var(--correct);
+      border-radius: 5px;
+      transition: width 1s ease;
+    }
+
+    .rating {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--gold);
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    /* ── SHARE SECTION ── */
+    .share-divider {
+      width: min(380px, 88vw);
+      height: 1px;
+      background: var(--line);
+      margin-bottom: 20px;
+    }
+
+    .share-label {
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .name-row {
+      display: flex;
+      gap: 8px;
+      width: min(380px, 88vw);
+      margin-bottom: 14px;
+    }
+
+    .name-input {
+      flex: 1;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--card-bg);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .name-input:focus {
+      border-color: var(--gold);
+    }
+
+    .name-input::placeholder {
+      color: var(--muted);
+    }
+
+    .generate-btn {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 10px 18px;
+      border: 1px solid var(--ink);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .generate-btn:hover {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .generate-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Share card preview */
+    .share-preview {
+      width: min(380px, 88vw);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .share-preview.visible {
+      display: flex;
+    }
+
+    .share-canvas-wrap {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    #shareCanvas {
+      width: 100%;
+      display: block;
+    }
+
+    .download-btn {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 13px 40px;
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .download-btn:hover {
+      background: #9a6f09;
+    }
+
+    .download-btn:active {
+      transform: scale(0.97);
+    }
+
+    .bottom-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .ghost-btn {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 11px 24px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .ghost-btn:hover {
+      border-color: var(--ink);
+      color: var(--ink);
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- START -->
-<div id="startScreen" class="screen active">
-  <h1 class="big-title">Note <span>Flash</span></h1>
-  <p class="tagline">Read the staff · Name the note · Beat the clock</p>
-  <p class="start-info">
-    Answer <b>15 correct notes</b> as fast as you can.<br>
-    The timer starts when the first note appears.
-  </p>
-  <div class="clef-toggle">
-    <button class="clef-btn active" id="sBtnTreble" onclick="setClef('treble')">Treble</button>
-    <button class="clef-btn"        id="sBtnBass"   onclick="setClef('bass')">Bass</button>
+  <!-- START -->
+  <div id="startScreen" class="screen active">
+    <h1 class="big-title">Note <span>Flash</span></h1>
+    <p class="tagline">Read the staff · Name the note · Beat the clock</p>
+    <p class="start-info">
+      Answer <b>15 correct notes</b> as fast as you can.<br>
+      The timer starts when the first note appears.
+    </p>
+    <div class="clef-toggle">
+      <button class="clef-btn active" id="sBtnTreble" onclick="setClef('treble')">Treble</button>
+      <button class="clef-btn" id="sBtnBass" onclick="setClef('bass')">Bass</button>
+    </div>
+    <button class="primary-btn" onclick="startGame()">Start</button>
   </div>
-  <button class="primary-btn" onclick="startGame()">Start</button>
-</div>
 
-<!-- GAME -->
-<div id="gameScreen" class="screen">
-  <div class="topbar">
-    <div class="timer-display" id="timerDisplay">0.0s</div>
-    <div class="progress-wrap">
-      <div class="progress-meta">
-        <span id="progressLabel">0 / 15</span>
-        <span class="mistakes">Mistakes: <b id="wrongCount">0</b></span>
+  <!-- GAME -->
+  <div id="gameScreen" class="screen">
+    <div class="topbar">
+      <div class="timer-display" id="timerDisplay">0.0s</div>
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="progressLabel">0 / 15</span>
+          <span class="mistakes">Mistakes: <b id="wrongCount">0</b></span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="staff-card" id="staffCard">
+      <svg class="staff" id="staffSVG" viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="answers" id="answers"></div>
+    <p class="feedback" id="feedback"></p>
+  </div>
+
+  <!-- FINISH -->
+  <div id="finishScreen" class="screen">
+    <h2 class="finish-title">Round Complete</h2>
+    <p class="finish-sub">15 correct notes · <span id="finishClef">Treble</span> clef</p>
+
+    <div class="big-time" id="finalTime">—</div>
+    <p class="time-label" id="timeLabel">Total time</p>
+
+    <div class="stats-grid">
+      <div class="stat-cell">
+        <span class="stat-val good">15</span>
+        <span class="stat-lbl">Correct</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-val bad" id="fWrong">0</span>
+        <span class="stat-lbl">Mistakes</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-val" id="fAvg">—</span>
+        <span class="stat-lbl">Per Note</span>
       </div>
     </div>
-  </div>
-  <div class="staff-card" id="staffCard">
-    <svg class="staff" id="staffSVG" viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg"></svg>
-  </div>
-  <div class="answers" id="answers"></div>
-  <p class="feedback" id="feedback"></p>
-</div>
 
-<!-- FINISH -->
-<div id="finishScreen" class="screen">
-  <h2 class="finish-title">Round Complete</h2>
-  <p class="finish-sub">15 correct notes · <span id="finishClef">Treble</span> clef</p>
+    <div class="acc-wrap">
+      <div class="acc-meta">
+        <span>Accuracy</span>
+        <span id="accPct">—</span>
+      </div>
+      <div class="acc-track">
+        <div class="acc-fill" id="accFill" style="width:0%"></div>
+      </div>
+    </div>
 
-  <div class="big-time" id="finalTime">—</div>
-  <p class="time-label" id="timeLabel">Total time</p>
+    <p class="rating" id="ratingText"></p>
 
-  <div class="stats-grid">
-    <div class="stat-cell">
-      <span class="stat-val good">15</span>
-      <span class="stat-lbl">Correct</span>
-    </div>
-    <div class="stat-cell">
-      <span class="stat-val bad" id="fWrong">0</span>
-      <span class="stat-lbl">Mistakes</span>
-    </div>
-    <div class="stat-cell">
-      <span class="stat-val" id="fAvg">—</span>
-      <span class="stat-lbl">Per Note</span>
-    </div>
-  </div>
+    <!-- Share section -->
+    <div class="share-divider"></div>
+    <p class="share-label">Share your result</p>
 
-  <div class="acc-wrap">
-    <div class="acc-meta">
-      <span>Accuracy</span>
-      <span id="accPct">—</span>
+    <div class="name-row">
+      <input class="name-input" id="nameInput" type="text" placeholder="Your name (optional)" maxlength="30">
+      <button class="generate-btn" onclick="generateCard()">Create Image</button>
     </div>
-    <div class="acc-track">
-      <div class="acc-fill" id="accFill" style="width:0%"></div>
+
+    <div class="share-preview" id="sharePreview">
+      <div class="share-canvas-wrap">
+        <canvas id="shareCanvas" width="800" height="420"></canvas>
+      </div>
+      <button class="download-btn" onclick="downloadCard()">⬇ Save Image</button>
+    </div>
+
+    <div class="bottom-btns">
+      <button class="ghost-btn" onclick="resetGame()">Play Again</button>
     </div>
   </div>
 
-  <p class="rating" id="ratingText"></p>
+  <script>
+    // DATA
+    const SOLFEGE = ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Si'];
+    const TREBLE_NOTES = [
+      { name: 'Do', step: 0, label: 'Middle C' }, { name: 'Re', step: 1, label: 'D4' },
+      { name: 'Mi', step: 2, label: 'E4' }, { name: 'Fa', step: 3, label: 'F4' },
+      { name: 'Sol', step: 4, label: 'G4' }, { name: 'La', step: 5, label: 'A4' },
+      { name: 'Si', step: 6, label: 'B4' }, { name: 'Do', step: 7, label: 'C5' },
+      { name: 'Re', step: 8, label: 'D5' }, { name: 'Mi', step: 9, label: 'E5' },
+      { name: 'Fa', step: 10, label: 'F5' }, { name: 'Sol', step: 11, label: 'G5' },
+    ];
+    const BASS_NOTES = [
+      { name: 'Mi', step: 0, label: 'E2' }, { name: 'Fa', step: 1, label: 'F2' },
+      { name: 'Sol', step: 2, label: 'G2' }, { name: 'La', step: 3, label: 'A2' },
+      { name: 'Si', step: 4, label: 'B2' }, { name: 'Do', step: 5, label: 'C3' },
+      { name: 'Re', step: 6, label: 'D3' }, { name: 'Mi', step: 7, label: 'E3' },
+      { name: 'Fa', step: 8, label: 'F3' }, { name: 'Sol', step: 9, label: 'G3' },
+      { name: 'La', step: 10, label: 'A3' }, { name: 'Si', step: 11, label: 'B3' },
+      { name: 'Do', step: 12, label: 'C4 (Middle C)' },
+    ];
 
-  <!-- Share section -->
-  <div class="share-divider"></div>
-  <p class="share-label">Share your result</p>
+    // STATE
+    const GOAL = 15;
+    const WRONG_PENALTY_MS = 3000;
+    let clef = 'treble', currentNote = null;
+    let correctCount = 0, wrongCount = 0, penaltyMs = 0;
+    let locked = false;
+    let timerInterval = null, startTime = null, elapsed = 0;
 
-  <div class="name-row">
-    <input class="name-input" id="nameInput" type="text" placeholder="Your name (optional)" maxlength="30">
-    <button class="generate-btn" onclick="generateCard()">Create Image</button>
-  </div>
+    // cached finish data for card
+    let _finishData = {};
 
-  <div class="share-preview" id="sharePreview">
-    <div class="share-canvas-wrap">
-      <canvas id="shareCanvas" width="800" height="420"></canvas>
-    </div>
-    <button class="download-btn" onclick="downloadCard()">⬇ Save Image</button>
-  </div>
+    // SCREENS
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
 
-  <div class="bottom-btns">
-    <button class="ghost-btn" onclick="resetGame()">Play Again</button>
-  </div>
-</div>
+    function setClef(c) {
+      clef = c;
+      document.getElementById('sBtnTreble').classList.toggle('active', c === 'treble');
+      document.getElementById('sBtnBass').classList.toggle('active', c === 'bass');
+    }
 
-<script>
-// DATA
-const SOLFEGE = ['Do','Re','Mi','Fa','Sol','La','Si'];
-const TREBLE_NOTES = [
-  {name:'Do',step:0,label:'Middle C'},{name:'Re',step:1,label:'D4'},
-  {name:'Mi',step:2,label:'E4'},{name:'Fa',step:3,label:'F4'},
-  {name:'Sol',step:4,label:'G4'},{name:'La',step:5,label:'A4'},
-  {name:'Si',step:6,label:'B4'},{name:'Do',step:7,label:'C5'},
-  {name:'Re',step:8,label:'D5'},{name:'Mi',step:9,label:'E5'},
-  {name:'Fa',step:10,label:'F5'},{name:'Sol',step:11,label:'G5'},
-];
-const BASS_NOTES = [
-  {name:'Mi',step:0,label:'E2'},{name:'Fa',step:1,label:'F2'},
-  {name:'Sol',step:2,label:'G2'},{name:'La',step:3,label:'A2'},
-  {name:'Si',step:4,label:'B2'},{name:'Do',step:5,label:'C3'},
-  {name:'Re',step:6,label:'D3'},{name:'Mi',step:7,label:'E3'},
-  {name:'Fa',step:8,label:'F3'},{name:'Sol',step:9,label:'G3'},
-  {name:'La',step:10,label:'A3'},{name:'Si',step:11,label:'B3'},
-  {name:'Do',step:12,label:'C4 (Middle C)'},
-];
+    // TIMER
+    function startTimer() {
+      startTime = performance.now();
+      timerInterval = setInterval(() => {
+        const live = (performance.now() - startTime + penaltyMs) / 1000;
+        document.getElementById('timerDisplay').textContent = live.toFixed(1) + 's';
+      }, 100);
+    }
+    function stopTimer() {
+      clearInterval(timerInterval);
+      elapsed = (performance.now() - startTime) + penaltyMs;
+    }
 
-// STATE
-const GOAL = 15;
-const WRONG_PENALTY_MS = 3000;
-let clef = 'treble', currentNote = null;
-let correctCount = 0, wrongCount = 0, penaltyMs = 0;
-let locked = false;
-let timerInterval = null, startTime = null, elapsed = 0;
+    // GAME
+    function startGame() {
+      correctCount = 0; wrongCount = 0; penaltyMs = 0;
+      locked = false; elapsed = 0; startTime = null; currentNote = null;
+      document.getElementById('sharePreview').classList.remove('visible');
+      showScreen('gameScreen');
+      updateHUD();
+      nextNote();
+      startTimer();
+    }
 
-// cached finish data for card
-let _finishData = {};
+    function resetGame() { showScreen('startScreen'); }
 
-// SCREENS
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+    function nextNote(keepLocked) {
+      if (!keepLocked) { locked = false; clearFeedback(); }
+      const notes = clef === 'treble' ? TREBLE_NOTES : BASS_NOTES;
+      let c;
+      do { c = notes[Math.floor(Math.random() * notes.length)]; }
+      while (notes.length > 1 && currentNote && c.step === currentNote.step);
+      currentNote = c;
+      drawStaff(document.getElementById('staffSVG'), currentNote);
+      renderAnswers(buildChoices(currentNote.name));
+    }
 
-function setClef(c) {
-  clef = c;
-  document.getElementById('sBtnTreble').classList.toggle('active', c === 'treble');
-  document.getElementById('sBtnBass').classList.toggle('active', c === 'bass');
-}
+    function answer(name, btn) {
+      if (locked) return;
+      locked = true;
+      const isCorrect = name === currentNote.name;
+      const card = document.getElementById('staffCard');
 
-// TIMER
-function startTimer() {
-  startTime = performance.now();
-  timerInterval = setInterval(() => {
-    const live = (performance.now() - startTime + penaltyMs) / 1000;
-    document.getElementById('timerDisplay').textContent = live.toFixed(1) + 's';
-  }, 100);
-}
-function stopTimer() {
-  clearInterval(timerInterval);
-  elapsed = (performance.now() - startTime) + penaltyMs;
-}
+      if (isCorrect) {
+        correctCount++;
+        card.classList.add('flash-correct');
+        setFeedback(`✓  ${currentNote.name}  —  ${currentNote.label}`, 'ok');
+        updateHUD();
+        card.addEventListener('animationend', () => card.classList.remove('flash-correct', 'flash-wrong'), { once: true });
+        if (correctCount >= GOAL) { setTimeout(finishGame, 600); }
+        else { nextNote(true); setTimeout(() => { locked = false; clearFeedback(); }, 350); }
+      } else {
+        wrongCount++;
+        penaltyMs += WRONG_PENALTY_MS;
+        card.classList.add('flash-wrong');
+        setFeedback(`✗  That's ${currentNote.name}  —  ${currentNote.label}  (+${WRONG_PENALTY_MS / 1000}s penalty)`, 'err');
+        updateHUD();
+        card.addEventListener('animationend', () => card.classList.remove('flash-correct', 'flash-wrong'), { once: true });
+        nextNote(true);
+        setTimeout(() => { locked = false; clearFeedback(); }, 600);
+      }
+    }
 
-// GAME
-function startGame() {
-  correctCount = 0; wrongCount = 0; penaltyMs = 0;
-  locked = false; elapsed = 0; startTime = null; currentNote = null;
-  document.getElementById('sharePreview').classList.remove('visible');
-  showScreen('gameScreen');
-  updateHUD();
-  nextNote();
-  startTimer();
-}
+    function finishGame() { stopTimer(); showFinish(); }
 
-function resetGame() { showScreen('startScreen'); }
+    function updateHUD() {
+      document.getElementById('progressLabel').textContent = `${correctCount} / ${GOAL}`;
+      document.getElementById('progressFill').style.width = `${(correctCount / GOAL) * 100}%`;
+      document.getElementById('wrongCount').textContent = wrongCount;
+    }
 
-function nextNote(keepLocked) {
-  if(!keepLocked) { locked = false; clearFeedback(); }
-  const notes = clef === 'treble' ? TREBLE_NOTES : BASS_NOTES;
-  let c;
-  do { c = notes[Math.floor(Math.random() * notes.length)]; }
-  while(notes.length > 1 && currentNote && c.step === currentNote.step);
-  currentNote = c;
-  drawStaff(document.getElementById('staffSVG'), currentNote);
-  renderAnswers(buildChoices(currentNote.name));
-}
+    // FINISH
+    function showFinish() {
+      const totalSec = elapsed / 1000;
+      const rawSec = (elapsed - penaltyMs) / 1000;
+      const totalAns = correctCount + wrongCount;
+      const acc = Math.round((correctCount / totalAns) * 100);
+      const avg = (elapsed / correctCount / 1000).toFixed(2);
 
-function answer(name, btn) {
-  if(locked) return;
-  locked = true;
-  const isCorrect = name === currentNote.name;
-  const card = document.getElementById('staffCard');
+      _finishData = { totalSec, rawSec, acc, avg, wrongCount, penaltyMs, clef };
 
-  if(isCorrect) {
-    correctCount++;
-    card.classList.add('flash-correct');
-    setFeedback(`✓  ${currentNote.name}  —  ${currentNote.label}`, 'ok');
-    updateHUD();
-    card.addEventListener('animationend', () => card.classList.remove('flash-correct','flash-wrong'), {once:true});
-    if(correctCount >= GOAL) { setTimeout(finishGame, 600); }
-    else { nextNote(true); setTimeout(() => { locked = false; clearFeedback(); }, 350); }
-  } else {
-    wrongCount++;
-    penaltyMs += WRONG_PENALTY_MS;
-    card.classList.add('flash-wrong');
-    setFeedback(`✗  That's ${currentNote.name}  —  ${currentNote.label}  (+${WRONG_PENALTY_MS/1000}s penalty)`, 'err');
-    updateHUD();
-    card.addEventListener('animationend', () => card.classList.remove('flash-correct','flash-wrong'), {once:true});
-    nextNote(true);
-    setTimeout(() => { locked = false; clearFeedback(); }, 600);
-  }
-}
+      document.getElementById('finalTime').textContent = totalSec.toFixed(1) + 's';
+      document.getElementById('timeLabel').textContent = penaltyMs > 0
+        ? `${rawSec.toFixed(1)}s real  +  ${penaltyMs / 1000}s penalty`
+        : 'Total time';
+      document.getElementById('finishClef').textContent = clef.charAt(0).toUpperCase() + clef.slice(1);
+      document.getElementById('fWrong').textContent = wrongCount;
+      document.getElementById('fAvg').textContent = avg + 's';
+      document.getElementById('accPct').textContent = acc + '%';
 
-function finishGame() { stopTimer(); showFinish(); }
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        document.getElementById('accFill').style.width = acc + '%';
+      }));
 
-function updateHUD() {
-  document.getElementById('progressLabel').textContent = `${correctCount} / ${GOAL}`;
-  document.getElementById('progressFill').style.width = `${(correctCount/GOAL)*100}%`;
-  document.getElementById('wrongCount').textContent = wrongCount;
-}
+      const r = ratingText(totalSec, wrongCount);
+      document.getElementById('ratingText').textContent = r;
 
-// FINISH
-function showFinish() {
-  const totalSec = elapsed / 1000;
-  const rawSec   = (elapsed - penaltyMs) / 1000;
-  const totalAns = correctCount + wrongCount;
-  const acc      = Math.round((correctCount / totalAns) * 100);
-  const avg      = (elapsed / correctCount / 1000).toFixed(2);
+      showScreen('finishScreen');
+    }
 
-  _finishData = { totalSec, rawSec, acc, avg, wrongCount, penaltyMs, clef };
+    function ratingText(sec, wrong) {
+      if (sec < 20 && wrong === 0) return '"Flawless — absolute maestro."';
+      if (sec < 20) return '"Lightning fast!"';
+      if (sec < 35 && wrong === 0) return '"Perfect score — well done."';
+      if (sec < 35) return '"Very quick read."';
+      if (sec < 55 && wrong <= 2) return '"Solid performance."';
+      if (sec < 55) return '"Getting there — keep practicing."';
+      if (wrong === 0) return '"Careful and correct."';
+      return '"Practice makes perfect."';
+    }
 
-  document.getElementById('finalTime').textContent  = totalSec.toFixed(1) + 's';
-  document.getElementById('timeLabel').textContent  = penaltyMs > 0
-    ? `${rawSec.toFixed(1)}s real  +  ${penaltyMs/1000}s penalty`
-    : 'Total time';
-  document.getElementById('finishClef').textContent = clef.charAt(0).toUpperCase() + clef.slice(1);
-  document.getElementById('fWrong').textContent     = wrongCount;
-  document.getElementById('fAvg').textContent       = avg + 's';
-  document.getElementById('accPct').textContent     = acc + '%';
+    // ── SHARE CARD ────────────────────────────────────────────────────────────────
+    function generateCard() {
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      const W = 800, H = 420;
+      canvas.width = W;
+      canvas.height = H;
 
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    document.getElementById('accFill').style.width = acc + '%';
-  }));
+      const d = _finishData;
+      const name = document.getElementById('nameInput').value.trim();
+      const acc = d.acc;
 
-  const r = ratingText(totalSec, wrongCount);
-  document.getElementById('ratingText').textContent = r;
+      // Background — dark, musical feel
+      ctx.fillStyle = '#12100e';
+      ctx.fillRect(0, 0, W, H);
 
-  showScreen('finishScreen');
-}
+      // Subtle staff lines across full width (decorative)
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctx.lineWidth = 1;
+      const staffY = [160, 174, 188, 202, 216];
+      staffY.forEach(y => { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); });
 
-function ratingText(sec, wrong) {
-  if(sec < 20 && wrong === 0)      return '"Flawless — absolute maestro."';
-  if(sec < 20)                     return '"Lightning fast!"';
-  if(sec < 35 && wrong === 0)      return '"Perfect score — well done."';
-  if(sec < 35)                     return '"Very quick read."';
-  if(sec < 55 && wrong <= 2)       return '"Solid performance."';
-  if(sec < 55)                     return '"Getting there — keep practicing."';
-  if(wrong === 0)                  return '"Careful and correct."';
-  return '"Practice makes perfect."';
-}
+      // Gold accent bar left
+      ctx.fillStyle = '#b8860b';
+      ctx.fillRect(0, 0, 5, H);
 
-// ── SHARE CARD ────────────────────────────────────────────────────────────────
-function generateCard() {
-  const canvas  = document.getElementById('shareCanvas');
-  const ctx     = canvas.getContext('2d');
-  const W = 800, H = 420;
-  canvas.width  = W;
-  canvas.height = H;
+      // Top-left: app name
+      ctx.fillStyle = '#b8860b';
+      ctx.font = 'bold 18px "Space Mono", monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText('NOTE FLASH', 36, 44);
 
-  const d   = _finishData;
-  const name = document.getElementById('nameInput').value.trim();
-  const acc  = d.acc;
+      // Clef badge
+      const clefLabel = (d.clef.charAt(0).toUpperCase() + d.clef.slice(1)) + ' Clef';
+      ctx.font = '11px "Space Mono", monospace';
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.fillText(clefLabel.toUpperCase(), 36, 64);
 
-  // Background — dark, musical feel
-  ctx.fillStyle = '#12100e';
-  ctx.fillRect(0, 0, W, H);
+      // Player name (top right)
+      if (name) {
+        ctx.textAlign = 'right';
+        ctx.font = '13px "Space Mono", monospace';
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fillText(name, W - 36, 44);
+      }
 
-  // Subtle staff lines across full width (decorative)
-  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-  ctx.lineWidth = 1;
-  const staffY = [160, 174, 188, 202, 216];
-  staffY.forEach(y => { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); });
+      // Big time — center
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 96px "Playfair Display", Georgia, serif';
+      ctx.fillText(d.totalSec.toFixed(1) + 's', W / 2, 160);
 
-  // Gold accent bar left
-  ctx.fillStyle = '#b8860b';
-  ctx.fillRect(0, 0, 5, H);
+      // "Total time" label
+      ctx.font = '12px "Space Mono", monospace';
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.letterSpacing = '0.2em';
+      ctx.fillText('TOTAL TIME', W / 2, 186);
+      if (d.penaltyMs > 0) {
+        ctx.font = '11px "Space Mono", monospace';
+        ctx.fillStyle = '#cc3333';
+        ctx.fillText(`(${d.rawSec.toFixed(1)}s + ${d.penaltyMs / 1000}s penalty)`, W / 2, 206);
+      }
 
-  // Top-left: app name
-  ctx.fillStyle = '#b8860b';
-  ctx.font = 'bold 18px "Space Mono", monospace';
-  ctx.textAlign = 'left';
-  ctx.fillText('NOTE FLASH', 36, 44);
+      // Three stat boxes
+      const boxes = [
+        { label: 'CORRECT', val: '15', color: '#2e8a52' },
+        { label: 'MISTAKES', val: String(d.wrongCount), color: d.wrongCount === 0 ? '#2e8a52' : '#cc3333' },
+        { label: 'PER NOTE', val: d.avg + 's', color: '#ffffff' },
+      ];
+      const boxW = 180, boxH = 82, boxY = 250, gap = 20;
+      const totalBoxW = boxes.length * boxW + (boxes.length - 1) * gap;
+      const startX = (W - totalBoxW) / 2;
 
-  // Clef badge
-  const clefLabel = (d.clef.charAt(0).toUpperCase() + d.clef.slice(1)) + ' Clef';
-  ctx.font = '11px "Space Mono", monospace';
-  ctx.fillStyle = 'rgba(255,255,255,0.35)';
-  ctx.fillText(clefLabel.toUpperCase(), 36, 64);
+      boxes.forEach((box, i) => {
+        const bx = startX + i * (boxW + gap);
+        // box bg
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        roundRect(ctx, bx, boxY, boxW, boxH, 6);
+        ctx.fill();
+        // value
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 34px "Playfair Display", Georgia, serif';
+        ctx.fillStyle = box.color;
+        ctx.fillText(box.val, bx + boxW / 2, boxY + 42);
+        // label
+        ctx.font = '10px "Space Mono", monospace';
+        ctx.fillStyle = 'rgba(255,255,255,0.35)';
+        ctx.fillText(box.label, bx + boxW / 2, boxY + 62);
+      });
 
-  // Player name (top right)
-  if(name) {
-    ctx.textAlign = 'right';
-    ctx.font = '13px "Space Mono", monospace';
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
-    ctx.fillText(name, W - 36, 44);
-  }
+      // Accuracy bar
+      const barX = startX, barY = 352, barW = totalBoxW, barH = 8;
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      roundRect(ctx, barX, barY, barW, barH, 4); ctx.fill();
+      ctx.fillStyle = acc === 100 ? '#2e8a52' : acc >= 70 ? '#b8860b' : '#cc3333';
+      roundRect(ctx, barX, barY, barW * (acc / 100), barH, 4); ctx.fill();
 
-  // Big time — center
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 96px "Playfair Display", Georgia, serif';
-  ctx.fillText(d.totalSec.toFixed(1) + 's', W / 2, 160);
+      ctx.textAlign = 'left';
+      ctx.font = '10px "Space Mono", monospace';
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.fillText('ACCURACY', barX, barY - 8);
+      ctx.textAlign = 'right';
+      ctx.fillText(acc + '%', barX + barW, barY - 8);
 
-  // "Total time" label
-  ctx.font = '12px "Space Mono", monospace';
-  ctx.fillStyle = 'rgba(255,255,255,0.35)';
-  ctx.letterSpacing = '0.2em';
-  ctx.fillText('TOTAL TIME', W / 2, 186);
-  if(d.penaltyMs > 0) {
-    ctx.font = '11px "Space Mono", monospace';
-    ctx.fillStyle = '#cc3333';
-    ctx.fillText(`(${d.rawSec.toFixed(1)}s + ${d.penaltyMs/1000}s penalty)`, W / 2, 206);
-  }
+      // Rating quote bottom
+      const quote = ratingText(d.totalSec, d.wrongCount);
+      ctx.textAlign = 'center';
+      ctx.font = 'italic 14px "Playfair Display", Georgia, serif';
+      ctx.fillStyle = '#b8860b';
+      ctx.fillText(quote, W / 2, H - 22);
 
-  // Three stat boxes
-  const boxes = [
-    { label: 'CORRECT', val: '15',               color: '#2e8a52' },
-    { label: 'MISTAKES', val: String(d.wrongCount), color: d.wrongCount === 0 ? '#2e8a52' : '#cc3333' },
-    { label: 'PER NOTE', val: d.avg + 's',        color: '#ffffff' },
-  ];
-  const boxW = 180, boxH = 82, boxY = 250, gap = 20;
-  const totalBoxW = boxes.length * boxW + (boxes.length-1) * gap;
-  const startX = (W - totalBoxW) / 2;
+      // Add QR code to bottom right
+      if (typeof QRious !== 'undefined') {
+        const qrSize = 72;
+        const qrX = W - qrSize - 22;
+        const qrY = H - qrSize - 30;
 
-  boxes.forEach((box, i) => {
-    const bx = startX + i * (boxW + gap);
-    // box bg
-    ctx.fillStyle = 'rgba(255,255,255,0.05)';
-    roundRect(ctx, bx, boxY, boxW, boxH, 6);
-    ctx.fill();
-    // value
-    ctx.textAlign = 'center';
-    ctx.font = 'bold 34px "Playfair Display", Georgia, serif';
-    ctx.fillStyle = box.color;
-    ctx.fillText(box.val, bx + boxW/2, boxY + 42);
-    // label
-    ctx.font = '10px "Space Mono", monospace';
-    ctx.fillStyle = 'rgba(255,255,255,0.35)';
-    ctx.fillText(box.label, bx + boxW/2, boxY + 62);
-  });
+        // Draw subtle border behind QR code
+        ctx.fillStyle = '#ffffff';
+        roundRect(ctx, qrX - 4, qrY - 4, qrSize + 8, qrSize + 8, 4);
+        ctx.fill();
 
-  // Accuracy bar
-  const barX = startX, barY = 352, barW = totalBoxW, barH = 8;
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
-  roundRect(ctx, barX, barY, barW, barH, 4); ctx.fill();
-  ctx.fillStyle = acc === 100 ? '#2e8a52' : acc >= 70 ? '#b8860b' : '#cc3333';
-  roundRect(ctx, barX, barY, barW * (acc/100), barH, 4); ctx.fill();
+        const qr = new QRious({
+          value: 'https://roeesch.github.io/note_flash/',
+          size: qrSize,
+          background: '#ffffff',
+          foreground: '#1a1714',
+          level: 'M'
+        });
+        ctx.drawImage(qr.canvas, qrX, qrY);
 
-  ctx.textAlign = 'left';
-  ctx.font = '10px "Space Mono", monospace';
-  ctx.fillStyle = 'rgba(255,255,255,0.35)';
-  ctx.fillText('ACCURACY', barX, barY - 8);
-  ctx.textAlign = 'right';
-  ctx.fillText(acc + '%', barX + barW, barY - 8);
+        // Tiny label under QR
+        ctx.textAlign = 'center';
+        ctx.font = '9px "Space Mono", monospace';
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.letterSpacing = '0.05em';
+        ctx.fillText('SCAN TO PLAY', qrX + (qrSize / 2), qrY + qrSize + 16);
+      }
 
-  // Rating quote bottom
-  const quote = ratingText(d.totalSec, d.wrongCount);
-  ctx.textAlign = 'center';
-  ctx.font = 'italic 14px "Playfair Display", Georgia, serif';
-  ctx.fillStyle = '#b8860b';
-  ctx.fillText(quote, W / 2, H - 22);
+      document.getElementById('sharePreview').classList.add('visible');
+      // scroll into view smoothly
+      document.getElementById('sharePreview').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 
-  // Add QR code to bottom right
-  if (typeof QRious !== 'undefined') {
-    const qrSize = 72;
-    const qrX = W - qrSize - 22;
-    const qrY = H - qrSize - 30;
-    
-    // Draw subtle border behind QR code
-    ctx.fillStyle = '#ffffff';
-    roundRect(ctx, qrX - 4, qrY - 4, qrSize + 8, qrSize + 8, 4);
-    ctx.fill();
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
 
-    const qr = new QRious({
-      value: 'https://roeesch.github.io/note_flash/',
-      size: qrSize,
-      background: '#ffffff',
-      foreground: '#1a1714',
-      level: 'M'
+    function downloadCard() {
+      const canvas = document.getElementById('shareCanvas');
+      const name = document.getElementById('nameInput').value.trim();
+      const slug = name ? name.replace(/\s+/g, '-').toLowerCase() + '-' : '';
+      const link = document.createElement('a');
+      link.download = `noteflash-${slug}result.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // DRAWING (staff)
+    const STAFF_LEFT = 70, STAFF_RIGHT = 380, STAFF_TOP = 65, LINE_GAP = 14;
+    function stepToY(s) { return (STAFF_TOP + 4 * LINE_GAP) - (s - 2) * (LINE_GAP / 2); }
+
+    function drawStaff(svg, note) {
+      svg.innerHTML = '';
+      const ns = 'http://www.w3.org/2000/svg';
+      const ln = (x1, y1, x2, y2, s, w) => {
+        const l = document.createElementNS(ns, 'line');
+        l.setAttribute('x1', x1); l.setAttribute('y1', y1);
+        l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+        l.setAttribute('stroke', s || '#333028'); l.setAttribute('stroke-width', w || 1.4);
+        svg.appendChild(l);
+      };
+      for (let i = 0; i < 5; i++) ln(STAFF_LEFT, STAFF_TOP + i * LINE_GAP, STAFF_RIGHT, STAFF_TOP + i * LINE_GAP, '#333028', 1.4);
+      const cl = document.createElementNS(ns, 'text');
+      if (clef === 'treble') {
+        cl.setAttribute('x', STAFF_LEFT - 28); cl.setAttribute('y', STAFF_TOP + 2 * LINE_GAP + 8);
+        cl.setAttribute('font-size', '78'); cl.textContent = '𝄞';
+      } else {
+        cl.setAttribute('x', STAFF_LEFT - 26); cl.setAttribute('y', STAFF_TOP + 1.5 * LINE_GAP);
+        cl.setAttribute('font-size', '52'); cl.textContent = '𝄢';
+      }
+      cl.setAttribute('fill', '#1a1714'); cl.setAttribute('font-family', 'serif');
+      cl.setAttribute('dominant-baseline', 'middle'); cl.setAttribute('text-anchor', 'middle');
+      svg.appendChild(cl);
+      ln(STAFF_LEFT, STAFF_TOP, STAFF_LEFT, STAFF_TOP + 4 * LINE_GAP, '#1a1714', 2);
+      const ny = stepToY(note.step), nx = 420 / 2 + 10, nr = 10;
+      if (note.step <= 1) ln(nx - nr * 1.5, stepToY(0), nx + nr * 1.5, stepToY(0), '#1a1714', 1.8);
+      if (note.step >= 12) ln(nx - nr * 1.5, stepToY(12), nx + nr * 1.5, stepToY(12), '#1a1714', 1.8);
+      const el = document.createElementNS(ns, 'ellipse');
+      el.setAttribute('cx', nx); el.setAttribute('cy', ny);
+      el.setAttribute('rx', nr); el.setAttribute('ry', nr * 0.72);
+      el.setAttribute('fill', '#1a1714');
+      el.setAttribute('transform', `rotate(-12,${nx},${ny})`);
+      svg.appendChild(el);
+      const sd = note.step >= 6 ? 1 : -1, sx = sd === -1 ? nx + nr * 0.85 : nx - nr * 0.85;
+      ln(sx, ny, sx, ny + sd * 42, '#1a1714', 1.8);
+    }
+
+    // ANSWERS
+    function buildChoices(correct) {
+      const others = SOLFEGE.filter(n => n !== correct); shuffle(others);
+      const all = [correct, ...others.slice(0, 3)]; shuffle(all); return all;
+    }
+    function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; } }
+    function renderAnswers(choices) {
+      const c = document.getElementById('answers'); c.innerHTML = '';
+      choices.forEach(name => {
+        const b = document.createElement('button');
+        b.className = 'ans-btn'; b.textContent = name;
+        b.onclick = () => answer(name, b); c.appendChild(b);
+      });
+    }
+    function setFeedback(msg, type) { const e = document.getElementById('feedback'); e.textContent = msg; e.className = 'feedback ' + (type || ''); }
+    function clearFeedback() { const e = document.getElementById('feedback'); e.textContent = ''; e.className = 'feedback'; }
+
+    // KEYBOARD
+    const KEY_MAP = { '1': 'Do', '2': 'Re', '3': 'Mi', '4': 'Fa', '5': 'Sol', '6': 'La', '7': 'Si' };
+    document.addEventListener('keydown', e => {
+      if (document.getElementById('startScreen').classList.contains('active') && e.key === 'Enter') { startGame(); return; }
+      if (locked) return;
+      const n = KEY_MAP[e.key];
+      if (n) { const b = [...document.querySelectorAll('.ans-btn')].find(b => b.textContent === n); if (b) answer(n, b); }
     });
-    ctx.drawImage(qr.canvas, qrX, qrY);
-    
-    // Tiny label under QR
-    ctx.textAlign = 'center';
-    ctx.font = '9px "Space Mono", monospace';
-    ctx.fillStyle = 'rgba(255,255,255,0.4)';
-    ctx.letterSpacing = '0.05em';
-    ctx.fillText('SCAN TO PLAY', qrX + (qrSize/2), qrY + qrSize + 16);
-  }
 
-  document.getElementById('sharePreview').classList.add('visible');
-  // scroll into view smoothly
-  document.getElementById('sharePreview').scrollIntoView({behavior:'smooth', block:'nearest'});
-}
+    // Re-generate card live as name is typed (if card already shown)
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('nameInput').addEventListener('input', () => {
+        if (document.getElementById('sharePreview').classList.contains('visible')) generateCard();
+      });
+    });
 
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x+r, y);
-  ctx.lineTo(x+w-r, y);
-  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
-  ctx.lineTo(x+w, y+h-r);
-  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-  ctx.lineTo(x+r, y+h);
-  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
-  ctx.lineTo(x, y+r);
-  ctx.quadraticCurveTo(x, y, x+r, y);
-  ctx.closePath();
-}
-
-function downloadCard() {
-  const canvas = document.getElementById('shareCanvas');
-  const name   = document.getElementById('nameInput').value.trim();
-  const slug   = name ? name.replace(/\s+/g,'-').toLowerCase() + '-' : '';
-  const link   = document.createElement('a');
-  link.download = `noteflash-${slug}result.png`;
-  link.href    = canvas.toDataURL('image/png');
-  link.click();
-}
-
-// DRAWING (staff)
-const STAFF_LEFT=70, STAFF_RIGHT=380, STAFF_TOP=65, LINE_GAP=14;
-function stepToY(s) { return (STAFF_TOP+4*LINE_GAP) - (s-2)*(LINE_GAP/2); }
-
-function drawStaff(svg, note) {
-  svg.innerHTML = '';
-  const ns = 'http://www.w3.org/2000/svg';
-  const ln = (x1,y1,x2,y2,s,w) => {
-    const l=document.createElementNS(ns,'line');
-    l.setAttribute('x1',x1);l.setAttribute('y1',y1);
-    l.setAttribute('x2',x2);l.setAttribute('y2',y2);
-    l.setAttribute('stroke',s||'#333028');l.setAttribute('stroke-width',w||1.4);
-    svg.appendChild(l);
-  };
-  for(let i=0;i<5;i++) ln(STAFF_LEFT,STAFF_TOP+i*LINE_GAP,STAFF_RIGHT,STAFF_TOP+i*LINE_GAP,'#333028',1.4);
-  const cl=document.createElementNS(ns,'text');
-  if(clef==='treble') {
-    cl.setAttribute('x',STAFF_LEFT-28);cl.setAttribute('y',STAFF_TOP+2*LINE_GAP+8);
-    cl.setAttribute('font-size','78');cl.textContent='𝄞';
-  } else {
-    cl.setAttribute('x',STAFF_LEFT-26);cl.setAttribute('y',STAFF_TOP+1.5*LINE_GAP);
-    cl.setAttribute('font-size','52');cl.textContent='𝄢';
-  }
-  cl.setAttribute('fill','#1a1714');cl.setAttribute('font-family','serif');
-  cl.setAttribute('dominant-baseline','middle');cl.setAttribute('text-anchor','middle');
-  svg.appendChild(cl);
-  ln(STAFF_LEFT,STAFF_TOP,STAFF_LEFT,STAFF_TOP+4*LINE_GAP,'#1a1714',2);
-  const ny=stepToY(note.step), nx=420/2+10, nr=10;
-  if(note.step<=1)  ln(nx-nr*1.5,stepToY(0), nx+nr*1.5,stepToY(0), '#1a1714',1.8);
-  if(note.step>=12) ln(nx-nr*1.5,stepToY(12),nx+nr*1.5,stepToY(12),'#1a1714',1.8);
-  const el=document.createElementNS(ns,'ellipse');
-  el.setAttribute('cx',nx);el.setAttribute('cy',ny);
-  el.setAttribute('rx',nr);el.setAttribute('ry',nr*0.72);
-  el.setAttribute('fill','#1a1714');
-  el.setAttribute('transform',`rotate(-12,${nx},${ny})`);
-  svg.appendChild(el);
-  const sd=note.step>=6?1:-1, sx=sd===-1?nx+nr*0.85:nx-nr*0.85;
-  ln(sx,ny,sx,ny+sd*42,'#1a1714',1.8);
-}
-
-// ANSWERS
-function buildChoices(correct) {
-  const others=SOLFEGE.filter(n=>n!==correct); shuffle(others);
-  const all=[correct,...others.slice(0,3)]; shuffle(all); return all;
-}
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
-function renderAnswers(choices){
-  const c=document.getElementById('answers');c.innerHTML='';
-  choices.forEach(name=>{
-    const b=document.createElement('button');
-    b.className='ans-btn';b.textContent=name;
-    b.onclick=()=>answer(name,b);c.appendChild(b);
-  });
-}
-function setFeedback(msg,type){const e=document.getElementById('feedback');e.textContent=msg;e.className='feedback '+(type||'');}
-function clearFeedback(){const e=document.getElementById('feedback');e.textContent='';e.className='feedback';}
-
-// KEYBOARD
-const KEY_MAP={'1':'Do','2':'Re','3':'Mi','4':'Fa','5':'Sol','6':'La','7':'Si'};
-document.addEventListener('keydown',e=>{
-  if(document.getElementById('startScreen').classList.contains('active')&&e.key==='Enter'){startGame();return;}
-  if(locked)return;
-  const n=KEY_MAP[e.key];
-  if(n){const b=[...document.querySelectorAll('.ans-btn')].find(b=>b.textContent===n);if(b)answer(n,b);}
-});
-
-// Re-generate card live as name is typed (if card already shown)
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('nameInput').addEventListener('input', () => {
-    if(document.getElementById('sharePreview').classList.contains('visible')) generateCard();
-  });
-});
-
-// Register Service Worker for PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
-  });
-}
-</script>
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+      });
+    }
+  </script>
 </body>
+
 </html>
