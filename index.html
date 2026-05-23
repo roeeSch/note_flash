@@ -697,7 +697,7 @@
   <!-- FINISH -->
   <div id="finishScreen" class="screen">
     <h2 class="finish-title">Round Complete</h2>
-    <p class="finish-sub">15 correct notes · <span id="finishClef">Treble</span> clef</p>
+    <p class="finish-sub">15 notes · <span id="finishClef">Treble</span> clef · <span id="finishMode">Reading</span> test</p>
 
     <div class="big-time" id="finalTime">—</div>
     <p class="time-label" id="timeLabel">Total time</p>
@@ -892,6 +892,10 @@
         correctCount++;
         card.classList.add('flash-correct');
         setFeedback(`✓  ${currentNote.name}  —  ${currentNote.label}`, 'ok');
+        if (gameMode === 'hearing') {
+          const playedFreq = cardOverride ? parseFloat(cardOverride.dataset.freq) : currentNote.freq;
+          playTone(playedFreq);
+        }
         updateHUD();
         card.addEventListener('animationend', () => card.classList.remove('flash-correct', 'flash-wrong'), { once: true });
         if (correctCount >= GOAL) { 
@@ -910,7 +914,10 @@
         penaltyMs += WRONG_PENALTY_MS;
         card.classList.add('flash-wrong');
         setFeedback(`✗  That's ${currentNote.name}  —  ${currentNote.label}  (+${WRONG_PENALTY_MS / 1000}s penalty)`, 'err');
-        if (gameMode === 'hearing') playTone(currentNote.freq);
+        if (gameMode === 'hearing') {
+          const playedFreq = cardOverride && cardOverride.dataset.freq ? parseFloat(cardOverride.dataset.freq) : currentNote.freq;
+          playTone(playedFreq);
+        }
         updateHUD();
         card.addEventListener('animationend', () => card.classList.remove('flash-correct', 'flash-wrong'), { once: true });
         setTimeout(() => { 
@@ -936,13 +943,14 @@
       const acc = Math.round((correctCount / totalAns) * 100);
       const avg = (elapsed / correctCount / 1000).toFixed(2);
 
-      _finishData = { totalSec, rawSec, acc, avg, wrongCount, penaltyMs, clef };
+      _finishData = { totalSec, rawSec, acc, avg, wrongCount, penaltyMs, clef, gameMode };
 
       document.getElementById('finalTime').textContent = totalSec.toFixed(1) + 's';
       document.getElementById('timeLabel').textContent = penaltyMs > 0
         ? `${rawSec.toFixed(1)}s real  +  ${penaltyMs / 1000}s penalty`
         : 'Total time';
       document.getElementById('finishClef').textContent = clef.charAt(0).toUpperCase() + clef.slice(1);
+      document.getElementById('finishMode').textContent = gameMode.charAt(0).toUpperCase() + gameMode.slice(1);
       document.getElementById('fWrong').textContent = wrongCount;
       document.getElementById('fAvg').textContent = avg + 's';
       document.getElementById('accPct').textContent = acc + '%';
@@ -1003,11 +1011,12 @@
       ctx.fillStyle = '#b8860b';
       ctx.fillText('FLASH', 36 + m1.width, 44);
 
-      // Clef badge
+      // Mode and Clef badge
+      const modeLabel = (d.gameMode.charAt(0).toUpperCase() + d.gameMode.slice(1)) + ' Test';
       const clefLabel = (d.clef.charAt(0).toUpperCase() + d.clef.slice(1)) + ' Clef';
       ctx.font = '11px "Space Mono", monospace';
       ctx.fillStyle = '#7a7269';
-      ctx.fillText(clefLabel.toUpperCase(), 36, 64);
+      ctx.fillText(`${modeLabel.toUpperCase()} · ${clefLabel.toUpperCase()}`, 36, 64);
 
       // Player name (top right)
       if (name) {
@@ -1220,6 +1229,7 @@
         const div = document.createElement('div');
         div.className = 'mini-staff-card';
         div.dataset.name = noteObj.name;
+        div.dataset.freq = noteObj.freq;
         div.onclick = () => answer(noteObj.name, div);
         
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
