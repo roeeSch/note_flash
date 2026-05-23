@@ -955,8 +955,9 @@
         const qr = new QRious({
           value: 'https://roeesch.github.io/note_flash/',
           size: qrSize,
-          background: '#f7f5f2',
-          foreground: '#1a1714',
+          backgroundAlpha: 0,
+          foreground: '#b8860b', // Gold accent
+          padding: 0,
           level: 'M'
         });
         ctx.drawImage(qr.canvas, qrX, qrY);
