@@ -10,9 +10,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
   <style>
     *,
     *::before,
@@ -269,10 +268,25 @@
       transition: all 0.15s;
     }
 
-    .mini-staff-card:hover { border-color: var(--gold); }
-    .mini-staff-card.flash-correct { animation: fCorrect 0.45s ease; border-color: var(--correct); }
-    .mini-staff-card.flash-wrong { animation: fWrong 0.45s ease; border-color: var(--wrong); }
-    .mini-staff-card svg { width: 100%; height: 100%; overflow: visible; }
+    .mini-staff-card:hover {
+      border-color: var(--gold);
+    }
+
+    .mini-staff-card.flash-correct {
+      animation: fCorrect 0.45s ease;
+      border-color: var(--correct);
+    }
+
+    .mini-staff-card.flash-wrong {
+      animation: fWrong 0.45s ease;
+      border-color: var(--wrong);
+    }
+
+    .mini-staff-card svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
 
     .answers {
       display: grid;
@@ -614,8 +628,11 @@
 
     #adOverlay {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.85);
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
       z-index: 999;
       display: none;
       flex-direction: column;
@@ -623,7 +640,11 @@
       justify-content: center;
       color: #fff;
     }
-    #adOverlay.active { display: flex; }
+
+    #adOverlay.active {
+      display: flex;
+    }
+
     .mock-ad {
       width: min(320px, 90vw);
       height: 250px;
@@ -640,10 +661,24 @@
       text-align: center;
       padding: 20px;
     }
+
     .ad-timer {
       font-family: 'Space Mono', monospace;
       font-size: 1.2rem;
       color: #b8860b;
+      padding: 12px 28px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    .ad-timer.ad-ready {
+      background: #b8860b;
+      color: #fff;
+      font-weight: 700;
+      animation: pulse-btn 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse-btn {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
   </style>
 </head>
@@ -697,7 +732,8 @@
   <!-- FINISH -->
   <div id="finishScreen" class="screen">
     <h2 class="finish-title">Round Complete</h2>
-    <p class="finish-sub">15 notes · <span id="finishClef">Treble</span> clef · <span id="finishMode">Reading</span> test</p>
+    <p class="finish-sub">15 notes · <span id="finishClef">Treble</span> clef · <span id="finishMode">Reading</span>
+      test</p>
 
     <div class="big-time" id="finalTime">—</div>
     <p class="time-label" id="timeLabel">Total time</p>
@@ -730,19 +766,21 @@
     <p class="rating" id="ratingText"></p>
 
     <!-- Share section -->
-    <div class="share-divider"></div>
-    <p class="share-label">Share your result</p>
+    <h3 class="share-heading">Share your result</h3>
 
     <div class="name-row">
       <input class="name-input" id="nameInput" type="text" placeholder="Your name (optional)" maxlength="30">
-      <button class="generate-btn" onclick="generateCard()">Create Image</button>
+    </div>
+
+    <div class="share-actions" style="display: flex; gap: 10px; margin-bottom: 12px; justify-content: center;">
+      <button class="primary-btn" onclick="shareResult()" id="shareBtn">📤 Share Result</button>
+      <button class="ghost-btn" onclick="generateAndDownload()" style="font-size: 0.85em;">⬇ Save Image</button>
     </div>
 
     <div class="share-preview" id="sharePreview">
       <div class="share-canvas-wrap">
         <canvas id="shareCanvas" width="800" height="420"></canvas>
       </div>
-      <button class="download-btn" onclick="downloadCard()">⬇ Save Image</button>
     </div>
 
     <div class="bottom-btns">
@@ -778,7 +816,7 @@
     ];
 
     // STATE
-    const GOAL = 15;
+    const GOAL = 1;
     const WRONG_PENALTY_MS = 3000;
     let clef = 'treble', currentNote = null, gameMode = 'reading';
 
@@ -817,7 +855,7 @@
       gameMode = m;
       document.getElementById('sBtnReading').classList.toggle('active', m === 'reading');
       document.getElementById('sBtnHearing').classList.toggle('active', m === 'hearing');
-      document.getElementById('startInfo').innerHTML = m === 'reading' ? 
+      document.getElementById('startInfo').innerHTML = m === 'reading' ?
         'Answer <b>15 correct notes</b> as fast as you can.<br>The timer starts when the first note appears.' :
         'Listen to the note and select the correct staff.<br>Answer <b>15 notes</b> as fast as you can.';
     }
@@ -863,7 +901,7 @@
       do { c = notes[Math.floor(Math.random() * notes.length)]; }
       while (notes.length > 1 && currentNote && c.step === currentNote.step);
       currentNote = c;
-      
+
       if (gameMode === 'reading') {
         document.getElementById('staffCard').style.display = 'flex';
         document.getElementById('answers').style.display = 'grid';
@@ -898,16 +936,16 @@
         }
         updateHUD();
         card.addEventListener('animationend', () => card.classList.remove('flash-correct', 'flash-wrong'), { once: true });
-        if (correctCount >= GOAL) { 
+        if (correctCount >= GOAL) {
           setTimeout(() => {
             pausedMs += (performance.now() - pauseStart);
             finishGame();
           }, 1200);
-        } else { 
-          setTimeout(() => { 
+        } else {
+          setTimeout(() => {
             pausedMs += (performance.now() - pauseStart);
-            nextNote(); 
-          }, 1200); 
+            nextNote();
+          }, 1200);
         }
       } else {
         wrongCount++;
@@ -920,9 +958,9 @@
         }
         updateHUD();
         card.addEventListener('animationend', () => card.classList.remove('flash-correct', 'flash-wrong'), { once: true });
-        setTimeout(() => { 
+        setTimeout(() => {
           pausedMs += (performance.now() - pauseStart);
-          nextNote(); 
+          nextNote();
         }, 2000);
       }
     }
@@ -1026,8 +1064,8 @@
         ctx.fillText(name, W - 36, 44);
       }
 
-      // Center metrics — Shifted slightly left to make room for QR code
-      const timeCenterX = W / 2 - 80;
+      // Center metrics
+      const timeCenterX = W / 2;
 
       // Big time
       ctx.textAlign = 'center';
@@ -1044,30 +1082,6 @@
         ctx.font = '11px "Space Mono", monospace';
         ctx.fillStyle = '#cc3333';
         ctx.fillText(`(${d.rawSec.toFixed(1)}s + ${d.penaltyMs / 1000}s penalty)`, timeCenterX, 206);
-      }
-
-      // Add QR code next to Total Time
-      if (typeof QRious !== 'undefined') {
-        const qrSize = 100;
-        const qrX = timeCenterX + 120; // 120px to the right of the center of the time text
-        const qrY = 80;
-
-        const qr = new QRious({
-          value: 'https://roeesch.github.io/note_flash/',
-          size: qrSize,
-          backgroundAlpha: 0,
-          foreground: '#b8860b', // Gold accent
-          padding: 0,
-          level: 'M'
-        });
-        ctx.drawImage(qr.canvas, qrX, qrY);
-
-        // Tiny label under QR
-        ctx.textAlign = 'center';
-        ctx.font = '9px "Space Mono", monospace';
-        ctx.fillStyle = '#7a7269';
-        ctx.letterSpacing = '0.05em';
-        ctx.fillText('SCAN TO PLAY', qrX + (qrSize / 2), qrY + qrSize + 14);
       }
 
       // Three stat boxes
@@ -1119,7 +1133,13 @@
       ctx.textAlign = 'center';
       ctx.font = 'italic 14px "Playfair Display", Georgia, serif';
       ctx.fillStyle = '#b8860b';
-      ctx.fillText(quote, W / 2, H - 22);
+      ctx.fillText(quote, W / 2, H - 38);
+
+      // App URL at bottom right
+      ctx.textAlign = 'right';
+      ctx.font = '10px "Space Mono", monospace';
+      ctx.fillStyle = '#b8860b';
+      ctx.fillText('roeesch.github.io/note_flash', W - 20, H - 12);
 
       document.getElementById('sharePreview').classList.add('visible');
       // scroll into view smoothly
@@ -1140,33 +1160,110 @@
       ctx.closePath();
     }
 
-    function downloadCard() {
+    function showAd(rewardLabel, callback) {
       const overlay = document.getElementById('adOverlay');
       const timerEl = document.getElementById('adTimer');
       overlay.classList.add('active');
-      
+
       let timeLeft = 5;
-      timerEl.textContent = `Downloading in ${timeLeft}...`;
-      
-      // We simulate an ad network's callback timer
+      timerEl.textContent = `${rewardLabel} in ${timeLeft}...`;
+      timerEl.onclick = null;
+      timerEl.style.cursor = 'default';
+      timerEl.classList.remove('ad-ready');
+
       const interval = setInterval(() => {
         timeLeft--;
         if (timeLeft > 0) {
-          timerEl.textContent = `Downloading in ${timeLeft}...`;
+          timerEl.textContent = `${rewardLabel} in ${timeLeft}...`;
         } else {
           clearInterval(interval);
-          overlay.classList.remove('active');
-          
-          // Reward: actually trigger the download
-          const canvas = document.getElementById('shareCanvas');
-          const name = document.getElementById('nameInput').value.trim();
-          const slug = name ? name.replace(/\s+/g, '-').toLowerCase() + '-' : '';
-          const link = document.createElement('a');
-          link.download = `noteflash-${slug}result.png`;
-          link.href = canvas.toDataURL('image/png');
-          link.click();
+          timerEl.textContent = `✓ Tap to ${rewardLabel.toLowerCase()}`;
+          timerEl.style.cursor = 'pointer';
+          timerEl.classList.add('ad-ready');
+          timerEl.onclick = () => {
+            overlay.classList.remove('active');
+            timerEl.onclick = null;
+            timerEl.classList.remove('ad-ready');
+            callback();
+          };
         }
       }, 1000);
+    }
+
+    function generateAndDownload() {
+      generateCard();
+      showAd('Download', () => {
+        const canvas = document.getElementById('shareCanvas');
+        const name = document.getElementById('nameInput').value.trim();
+        const slug = name ? name.replace(/\s+/g, '-').toLowerCase() + '-' : '';
+        const link = document.createElement('a');
+        link.download = `noteflash-${slug}result.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+
+    function shareResult() {
+      generateCard();
+      showAd('Share', async () => {
+        const canvas = document.getElementById('shareCanvas');
+        const name = document.getElementById('nameInput').value.trim();
+        const slug = name ? name.replace(/\s+/g, '-').toLowerCase() + '-' : '';
+        const filename = `noteflash-${slug}result.png`;
+        const url = 'https://roeesch.github.io/note_flash/';
+        const d = _finishData;
+        const text = `I scored ${d.totalSec.toFixed(1)}s on Note Flash (${d.gameMode} · ${d.clef} clef)! Can you beat me?`;
+        const fullText = `${text} ${url}`;
+
+        const btn = document.getElementById('shareBtn');
+
+        // Layer 1: Native Web Share API (mobile, HTTPS only)
+        if (navigator.share && window.isSecureContext) {
+          try {
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            const file = new File([blob], filename, { type: 'image/png' });
+            const shareData = { title: 'Note Flash Result', text: text, url: url };
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              shareData.files = [file];
+            }
+            await navigator.share(shareData);
+            return; // success
+          } catch (err) {
+            if (err.name === 'AbortError') return; // user cancelled
+            console.log('navigator.share failed, trying clipboard:', err);
+          }
+        }
+
+        // Layer 2: Clipboard API (desktop, HTTPS only)
+        if (navigator.clipboard && window.isSecureContext) {
+          try {
+            await navigator.clipboard.writeText(fullText);
+            btn.innerHTML = '✅ Link copied!';
+            setTimeout(() => { btn.innerHTML = '📤 Share Result'; }, 2500);
+            return;
+          } catch (err) {
+            console.log('Clipboard API failed, trying execCommand:', err);
+          }
+        }
+
+        // Layer 3: Legacy execCommand (works on HTTP localhost)
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = fullText;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          btn.innerHTML = '✅ Link copied!';
+          setTimeout(() => { btn.innerHTML = '📤 Share Result'; }, 2500);
+        } catch (err) {
+          console.log('All copy methods failed:', err);
+          btn.innerHTML = '⚠ Could not copy';
+          setTimeout(() => { btn.innerHTML = '📤 Share Result'; }, 2500);
+        }
+      });
     }
 
     // DRAWING (staff)
@@ -1216,14 +1313,14 @@
     }
     function buildHearingChoices(correct) {
       const notes = clef === 'treble' ? TREBLE_NOTES : BASS_NOTES;
-      const others = notes.filter(n => n.name !== correct.name); 
+      const others = notes.filter(n => n.name !== correct.name);
       shuffle(others);
-      const all = [correct, others[0], others[1]]; 
-      shuffle(all); 
+      const all = [correct, others[0], others[1]];
+      shuffle(all);
       return all;
     }
     function renderHearingOptions(choices) {
-      const c = document.getElementById('hearingOptions'); 
+      const c = document.getElementById('hearingOptions');
       c.innerHTML = '';
       choices.forEach(noteObj => {
         const div = document.createElement('div');
@@ -1231,13 +1328,13 @@
         div.dataset.name = noteObj.name;
         div.dataset.freq = noteObj.freq;
         div.onclick = () => answer(noteObj.name, div);
-        
+
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('viewBox', '0 0 420 220');
         svg.className = 'staff';
         div.appendChild(svg);
         c.appendChild(div);
-        
+
         drawStaff(svg, noteObj);
       });
     }
@@ -1264,7 +1361,7 @@
           const btn = [...document.querySelectorAll('.mini-staff-card')].find(b => b.dataset.name === n);
           if (btn) answer(n, btn);
         } else {
-          const b = [...document.querySelectorAll('.ans-btn')].find(b => b.textContent === n); 
+          const b = [...document.querySelectorAll('.ans-btn')].find(b => b.textContent === n);
           if (b) answer(n, null);
         }
       }
