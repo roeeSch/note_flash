@@ -670,15 +670,24 @@
       border-radius: 8px;
       transition: all 0.3s ease;
     }
+
     .ad-timer.ad-ready {
       background: #b8860b;
       color: #fff;
       font-weight: 700;
       animation: pulse-btn 1.2s ease-in-out infinite;
     }
+
     @keyframes pulse-btn {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
     }
   </style>
 </head>
@@ -816,7 +825,7 @@
     ];
 
     // STATE
-    const GOAL = 1;
+    const GOAL = 15;
     const WRONG_PENALTY_MS = 3000;
     let clef = 'treble', currentNote = null, gameMode = 'reading';
 
