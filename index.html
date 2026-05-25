@@ -632,34 +632,97 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.88);
       z-index: 999;
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       color: #fff;
+      backdrop-filter: blur(6px);
     }
 
     #adOverlay.active {
       display: flex;
     }
 
-    .mock-ad {
-      width: min(320px, 90vw);
-      height: 250px;
-      background: #1a1714;
-      border: 1px dashed #d0c8be;
+    .promo-card {
+      width: min(340px, 88vw);
+      background: linear-gradient(145deg, #1a1714, #2a2520);
+      border: 1px solid #3a342e;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      animation: adSlideIn 0.4s ease-out;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .promo-card:hover { transform: scale(1.02); }
+    .promo-card:active { transform: scale(0.98); }
+
+    @keyframes adSlideIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .promo-icon {
+      width: 100%;
+      height: 140px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.8rem;
-      letter-spacing: 0.1em;
-      margin-bottom: 20px;
-      color: #7a7269;
-      text-transform: uppercase;
-      text-align: center;
+      font-size: 56px;
+      background: linear-gradient(135deg, #b8860b22, #b8860b11);
+      border-bottom: 1px solid #3a342e;
+    }
+
+    .promo-body {
       padding: 20px;
+      text-align: center;
+    }
+
+    .promo-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #f7f5f2;
+      margin-bottom: 8px;
+    }
+
+    .promo-desc {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: #b0a89e;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .promo-cta {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #b8860b;
+      text-transform: uppercase;
+      border: 1px solid #b8860b;
+      border-radius: 6px;
+      padding: 8px 18px;
+      transition: all 0.2s ease;
+    }
+    .promo-card:hover .promo-cta {
+      background: #b8860b;
+      color: #1a1714;
+    }
+
+    .promo-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: #5a544e;
+      text-transform: uppercase;
+      margin-bottom: 10px;
     }
 
     .ad-timer {
@@ -679,15 +742,8 @@
     }
 
     @keyframes pulse-btn {
-
-      0%,
-      100% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.05);
-      }
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
   </style>
 </head>
@@ -797,10 +853,11 @@
     </div>
   </div>
 
-  <!-- INTERSTITIAL AD PLACEHOLDER -->
+  <!-- INTERSTITIAL PROMO -->
   <div id="adOverlay">
-    <div class="mock-ad">Your 5-Second Video Ad Placeholder</div>
-    <div class="ad-timer" id="adTimer">Reward in 5...</div>
+    <div class="promo-label">Promoted</div>
+    <div id="promoContainer"></div>
+    <div class="ad-timer" id="adTimer">5...</div>
   </div>
 
   <script>
@@ -1169,13 +1226,85 @@
       ctx.closePath();
     }
 
+    // ── PROMO ADS DATA ──────────────────────────────────────────────────────
+    const PROMOS = [
+      {
+        icon: '🎵',
+        title: 'Try Hearing Mode!',
+        desc: 'Listen to the pitch and find the matching note on the staff. Train your ear!',
+        cta: 'Switch Mode',
+        action: () => { resetGame(); setMode('hearing'); }
+      },
+      {
+        icon: '🎼',
+        title: 'Master the Bass Clef',
+        desc: 'Think you know Treble? Challenge yourself with the Bass clef notes.',
+        cta: 'Try Bass Clef',
+        action: () => { resetGame(); setClef('bass'); }
+      },
+      {
+        icon: '🏆',
+        title: 'Challenge a Friend!',
+        desc: 'Share your score card and see who can beat your time.',
+        cta: 'Share Now',
+        action: () => { /* stays on finish screen */ }
+      },
+      {
+        icon: '⭐',
+        title: 'Enjoying Note Flash?',
+        desc: 'Star us on GitHub to help others discover the app!',
+        cta: 'View on GitHub',
+        action: () => { window.open('https://github.com/roeeSch/note_flash', '_blank'); }
+      },
+      {
+        icon: '📱',
+        title: 'Add to Home Screen',
+        desc: 'Install Note Flash as an app for instant access — no download needed!',
+        cta: 'Learn How',
+        action: () => { alert('Tap the browser menu (⋮ or □↗) and select "Add to Home Screen"'); }
+      },
+    ];
+
+    function pickPromo() {
+      const lastIdx = parseInt(localStorage.getItem('nf_lastPromo') || '-1');
+      let idx;
+      do { idx = Math.floor(Math.random() * PROMOS.length); }
+      while (PROMOS.length > 1 && idx === lastIdx);
+      localStorage.setItem('nf_lastPromo', idx);
+      return PROMOS[idx];
+    }
+
+    function renderPromo(promo) {
+      const container = document.getElementById('promoContainer');
+      container.innerHTML = '';
+      const card = document.createElement('div');
+      card.className = 'promo-card';
+      card.innerHTML = `
+        <div class="promo-icon">${promo.icon}</div>
+        <div class="promo-body">
+          <div class="promo-title">${promo.title}</div>
+          <div class="promo-desc">${promo.desc}</div>
+          <div class="promo-cta">${promo.cta}</div>
+        </div>
+      `;
+      card.addEventListener('click', () => {
+        promo.action();
+      });
+      container.appendChild(card);
+    }
+
     function showAd(rewardLabel, callback) {
       const overlay = document.getElementById('adOverlay');
       const timerEl = document.getElementById('adTimer');
+
+      // Pick and render a promo
+      const promo = pickPromo();
+      renderPromo(promo);
+
       overlay.classList.add('active');
 
       let timeLeft = 5;
-      timerEl.textContent = `${rewardLabel} in ${timeLeft}...`;
+      timerEl.textContent = `${timeLeft}...`;
       timerEl.onclick = null;
       timerEl.style.cursor = 'default';
       timerEl.classList.remove('ad-ready');
@@ -1183,7 +1312,7 @@
       const interval = setInterval(() => {
         timeLeft--;
         if (timeLeft > 0) {
-          timerEl.textContent = `${rewardLabel} in ${timeLeft}...`;
+          timerEl.textContent = `${timeLeft}...`;
         } else {
           clearInterval(interval);
           timerEl.textContent = `✓ Tap to ${rewardLabel.toLowerCase()}`;
