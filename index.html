@@ -4,7 +4,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Note Flash Test</title>
+  <title>Note Flash · Interactive Music Sight-Reading Trainer</title>
+  <meta name="description"
+    content="Master music sight-reading with Note Flash! Play interactive treble and bass clef trainers, recognize notes, hear real pitches, and beat the clock. 100% free and open-source.">
+  <meta name="keywords"
+    content="music trainer, sight reading, note flash, read music notes, treble clef, bass clef, pitch trainer, ear training, learn notes">
+  <link rel="canonical" href="https://noteflashmusic.com/">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://noteflashmusic.com/">
+  <meta property="og:title" content="Note Flash · Interactive Music Sight-Reading Trainer">
+  <meta property="og:description"
+    content="Master music sight-reading with Note Flash! Play interactive treble and bass clef trainers, recognize notes, hear real pitches, and beat the clock.">
+  <meta property="og:image" content="https://noteflashmusic.com/icon-512.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://noteflashmusic.com/">
+  <meta property="twitter:title" content="Note Flash · Interactive Music Sight-Reading Trainer">
+  <meta property="twitter:description"
+    content="Master music sight-reading with Note Flash! Play interactive treble and bass clef trainers, recognize notes, hear real pitches, and beat the clock.">
+  <meta property="twitter:image" content="https://noteflashmusic.com/icon-512.png">
+
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#ffffff">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -653,17 +675,30 @@
       border-radius: 16px;
       overflow: hidden;
       margin-bottom: 20px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
       animation: adSlideIn 0.4s ease-out;
       cursor: pointer;
       transition: transform 0.2s ease;
     }
-    .promo-card:hover { transform: scale(1.02); }
-    .promo-card:active { transform: scale(0.98); }
+
+    .promo-card:hover {
+      transform: scale(1.02);
+    }
+
+    .promo-card:active {
+      transform: scale(0.98);
+    }
 
     @keyframes adSlideIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.95); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     .promo-icon {
@@ -711,6 +746,7 @@
       padding: 8px 18px;
       transition: all 0.2s ease;
     }
+
     .promo-card:hover .promo-cta {
       background: #b8860b;
       color: #1a1714;
@@ -742,8 +778,214 @@
     }
 
     @keyframes pulse-btn {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    /* ── LANDING / ABOUT SECTION ── */
+    .landing-section {
+      width: min(420px, 90vw);
+      margin-top: 40px;
+      border-top: 1px solid var(--line);
+      padding-top: 30px;
+      text-align: left;
+    }
+
+    .landing-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .accordion-item {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      margin-bottom: 12px;
+      background: var(--card-bg);
+      overflow: hidden;
+      transition: all 0.25s ease;
+    }
+
+    .accordion-item[open] {
+      border-color: var(--gold);
+      box-shadow: 0 4px 12px rgba(184, 134, 11, 0.06);
+    }
+
+    .accordion-item summary {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      padding: 14px 18px;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .accordion-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .accordion-item summary::after {
+      content: '+';
+      font-size: 1.1rem;
+      color: var(--gold);
+      transition: transform 0.2s;
+    }
+
+    .accordion-item[open] summary::after {
+      content: '−';
+      transform: rotate(180deg);
+    }
+
+    .accordion-content {
+      padding: 0 18px 18px 18px;
+      font-size: 0.76rem;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .accordion-content p {
+      margin-bottom: 10px;
+    }
+
+    .accordion-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .accordion-content ol {
+      padding-left: 18px;
+      margin-bottom: 10px;
+    }
+
+    .accordion-content li {
+      margin-bottom: 6px;
+    }
+
+    .accordion-content li strong {
+      color: var(--ink);
+    }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      width: min(420px, 90vw);
+      margin-top: 30px;
+      padding-top: 15px;
+      border-top: 1px dotted var(--line);
+      font-size: 0.64rem;
+      color: var(--muted);
+      text-align: center;
+      font-family: 'Space Mono', monospace;
+      letter-spacing: 0.02em;
+      line-height: 1.6;
+    }
+
+    .site-footer a {
+      color: var(--gold);
+      text-decoration: none;
+      margin: 0 6px;
+      font-weight: 700;
+      transition: color 0.15s ease;
+    }
+
+    .site-footer a:hover {
+      color: var(--ink);
+    }
+
+    /* ── COMPLIANCE MODALS ── */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(26, 23, 20, 0.92);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      max-width: 540px;
+      width: 100%;
+      max-height: 75vh;
+      overflow-y: auto;
+      padding: 28px;
+      position: relative;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+      transform: scale(0.94);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: color 0.15s;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: var(--ink);
+    }
+
+    .modal-body-text {
+      font-size: 0.74rem;
+      line-height: 1.6;
+      color: var(--muted);
+      margin-top: 18px;
+      text-align: left;
+    }
+
+    .modal-body-text h3 {
+      color: var(--ink);
+      margin-top: 18px;
+      margin-bottom: 6px;
+      font-size: 0.82rem;
+      font-family: 'Space Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .modal-body-text p {
+      margin-bottom: 12px;
     }
   </style>
 </head>
@@ -767,6 +1009,70 @@
       <button class="clef-btn" id="sBtnBass" onclick="setClef('bass')">Bass</button>
     </div>
     <button class="primary-btn" onclick="startGame()">Start</button>
+
+    <!-- LANDING / ABOUT SECTION -->
+    <div class="landing-section">
+      <h2>About Note Flash</h2>
+
+      <details class="accordion-item" open>
+        <summary>How It Works</summary>
+        <div class="accordion-content">
+          <p>Note Flash is an interactive sight-reading game designed to build speed and automaticity in musical
+            notation. Here is the step-by-step training flow:</p>
+          <ol>
+            <li><strong>Select Mode:</strong> Choose <strong>Reading</strong> mode to identify notes drawn on a
+              traditional musical staff, or <strong>Hearing</strong> mode to recognize specific pitches played as pure
+              audio tones.</li>
+            <li><strong>Select Clef:</strong> Drill note reading on either the <strong>Treble Clef</strong> (perfect for
+              flute, violin, right hand piano, etc.) or <strong>Bass Clef</strong> (for cello, bass, left hand piano,
+              and low-register instruments).</li>
+            <li><strong>Name the Note:</strong> Click or tap the correct answer letter button representing the note
+              drawn on the card or the pitch played.</li>
+            <li><strong>Beat the Clock:</strong> You must identify <strong>15 correct notes</strong> as fast as you can.
+              Every wrong note adds a <strong>3-second penalty</strong> to your final time! Share your score and try to
+              beat your personal record.</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="accordion-item">
+        <summary>Educational Value</summary>
+        <div class="accordion-content">
+          <p>Sight-reading is one of the most vital but intimidating skills for students, amateurs, and professional
+            musicians alike. Here is why Note Flash is an essential part of your practice routine:</p>
+          <p><strong>Instant Muscle Memory:</strong> Note Flash removes cognitive friction by using a gamified,
+            high-frequency feedback loop. The faster you connect a visual note to its letter name, the more automatic
+            your playing becomes on your physical instrument.</p>
+          <p><strong>Relative Pitch & Ear Training:</strong> Isolating pitches in Hearing Mode builds relative pitch and
+            harmonic recognition, bridging the gap between sight-reading and absolute listening comprehension.</p>
+          <p><strong>Bilingual Solfège Support:</strong> Switch seamlessly between English alphabet letter naming (C, D,
+            E...) and traditional Solfège (Do, Re, Mi...) to suit your country's local curriculum or musical traditions.
+          </p>
+          <p><strong>Anxiety-Free micro-drills:</strong> Instead of long, taxing sessions, a 1-minute daily sprint on
+            Note Flash forms consistent retention and keeps pitch recognition sharp.</p>
+        </div>
+      </details>
+
+      <details class="accordion-item">
+        <summary>About the Developer</summary>
+        <div class="accordion-content">
+          <p>Note Flash was built for piano students, wind players, string instrumentalists, and school music teachers
+            looking for a clean, zero-clutter digital trainer.</p>
+          <p>It is designed as a modern Progressive Web App (PWA) that loads instantly and works offline, so you can pin
+            it directly to your phone's home screen or run it on a classroom tablet.</p>
+          <p>Feedback, issue reports, and stars are welcome at the open-source repository. To support hosting costs and
+            ongoing feature updates, Note Flash is ad-supported, keeping sight-reading drills free and accessible to all
+            musicians worldwide.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- SITE FOOTER -->
+    <footer class="site-footer">
+      &copy; 2026 Note Flash. All rights reserved.<br>
+      <a href="#" onclick="openModal('privacyModal'); return false;">Privacy Policy</a> |
+      <a href="#" onclick="openModal('termsModal'); return false;">Terms of Service</a>
+    </footer>
   </div>
 
   <!-- GAME -->
@@ -860,7 +1166,115 @@
     <div class="ad-timer" id="adTimer">5...</div>
   </div>
 
+  <!-- COMPLIANCE MODALS -->
+  <div id="privacyModal" class="modal-overlay" onclick="closeModal('privacyModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal('privacyModal')">&times;</button>
+      <h2>Privacy Policy</h2>
+      <div class="modal-body-text">
+        <p><strong>Last Updated: May 25, 2026</strong></p>
+        <p>At Note Flash (accessible via https://noteflashmusic.com), the privacy of our visitors is of paramount
+          importance to us. This Privacy Policy document outlines the types of information we do and do not collect, and
+          how it is processed.</p>
+
+        <h3>1. Personal Data & Storage</h3>
+        <p>Note Flash is a fully serverless, client-side application. We do not require registration, we do not create
+          user accounts, and we do not collect, store, or transmit any of your personal data, musical scores, times,
+          names, or game preferences to any external servers.</p>
+        <p>All game records, custom settings (such as clef preferences, solfège naming configurations, and best times),
+          and local achievement history are saved 100% locally within your own browser's private sandbox using
+          <strong>localStorage</strong>. Clearing your browser's data or cache will erase this local history, which is
+          not recoverable by us.</p>
+
+        <h3>2. Log Files & Web Analytics</h3>
+        <p>Like standard web servers, our static hosting platform may automatically record anonymized log data (such as
+          IP addresses, browser types, Internet Service Providers, referring/exit pages, and date/time stamps). This
+          information is not linked to any personally identifiable information and is used solely for traffic analysis,
+          system security, and maintaining site stability.</p>
+
+        <h3>3. Cookies and Google AdSense</h3>
+        <p>We partner with Google AdSense to serve advertisements on our platform to support our hosting costs. Google
+          and other third-party vendors use cookies to serve personalized ads based on a user's prior visits to this and
+          other websites on the Internet.</p>
+        <p>Google's use of advertising cookies enables it and its partners to serve ads to our users based on their
+          visit to our site and other sites on the web. You can manage or disable personalized advertising by visiting
+          Google's <a href="https://adssettings.google.com" target="_blank" rel="noopener">Ads Settings</a> or by
+          configuring cookie preferences directly in your browser or through tools like <a
+            href="https://www.aboutads.info" target="_blank" rel="noopener">aboutads.info</a>.</p>
+
+        <h3>4. Children's Privacy Information</h3>
+        <p>We are fully compliant with children's privacy protection standards (including COPPA). Since Note Flash does
+          not collect, request, or store any personal information of any kind, it is entirely safe for children, music
+          students, and classroom settings.</p>
+
+        <h3>5. Contact Us</h3>
+        <p>If you have any questions or require more information about our Privacy Policy, please feel free to reach out
+          to us via the contact options listed on our open-source project repository.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="termsModal" class="modal-overlay" onclick="closeModal('termsModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal('termsModal')">&times;</button>
+      <h2>Terms of Service</h2>
+      <div class="modal-body-text">
+        <p><strong>Last Updated: May 25, 2026</strong></p>
+        <p>Welcome to Note Flash (https://noteflashmusic.com). By accessing or using our interactive music trainer, you
+          agree to be bound by the following Terms of Service. If you do not agree, please do not use the application.
+        </p>
+
+        <h3>1. Use License</h3>
+        <p>Note Flash is a 100% free web-based trainer. You are granted a non-exclusive, non-transferable, revocable
+          license to access and use the trainer for personal, educational, or classroom instruction purposes. You may
+          not attempt to reverse engineer, disrupt, or bypass the application's timers or ad gates.</p>
+
+        <h3>2. Copyright & Open Source</h3>
+        <p>All graphical assets, musical score rendering code, sound synthesizers, and structural code are open-source.
+          You are free to share your score certificate cards and high scores with friends, teachers, and communities.
+          All product branding and source files remain the intellectual property of the project creators.</p>
+
+        <h3>3. Disclaimer & Limitation of Liability</h3>
+        <p>This web application is provided on an "as is" and "as available" basis without warranties of any kind,
+          either express or implied. We do not guarantee that the pitch synthesizers, visual staff layouts, timer
+          calculations, or native sharing mechanisms will be 100% error-free or uninterrupted. Under no circumstances
+          shall we be liable for any direct or indirect issues arising from your use of Note Flash.</p>
+
+        <h3>4. Advertising & External Links</h3>
+        <p>We display promotional features and Google AdSense advertisements. Clicking on ads or external links will
+          redirect you to third-party services. We are not responsible for the content, security, or practices of any
+          external web resources.</p>
+
+        <h3>5. Modifications to Terms</h3>
+        <p>We reserve the right to modify these terms at any time. Your continued use of Note Flash following any
+          updates constitutes acceptance of the new Terms of Service.</p>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // MODAL TOGGLES
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.style.display = 'flex';
+        // force reflow
+        modal.offsetHeight;
+        modal.classList.add('active');
+      }
+    }
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => {
+          if (!modal.classList.contains('active')) {
+            modal.style.display = 'none';
+          }
+        }, 250);
+      }
+    }
+
     // DATA
     const SOLFEGE = ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Si'];
     const TREBLE_NOTES = [
@@ -1205,7 +1619,7 @@
       ctx.textAlign = 'right';
       ctx.font = '10px "Space Mono", monospace';
       ctx.fillStyle = '#b8860b';
-      ctx.fillText('roeesch.github.io/note_flash', W - 20, H - 12);
+      ctx.fillText('noteflashmusic.com', W - 20, H - 12);
 
       document.getElementById('sharePreview').classList.add('visible');
       // scroll into view smoothly
@@ -1233,14 +1647,14 @@
         title: 'Enjoying Note Flash?',
         desc: 'A quick GitHub star helps musicians discover this free tool. It takes 2 seconds!',
         cta: '★ Star on GitHub',
-        action: () => { window.open('https://github.com/roeeSch/note_flash', '_blank'); }
+        action: () => { window.open('https://noteflashmusic.com', '_blank'); }
       },
       {
         icon: '🌟',
         title: 'Help Us Grow!',
         desc: 'Note Flash is free & open source. A GitHub star helps us reach more music students.',
         cta: '★ Give a Star',
-        action: () => { window.open('https://github.com/roeeSch/note_flash', '_blank'); }
+        action: () => { window.open('https://noteflashmusic.com', '_blank'); }
       },
       {
         icon: '🎵',
@@ -1350,7 +1764,7 @@
         const name = document.getElementById('nameInput').value.trim();
         const slug = name ? name.replace(/\s+/g, '-').toLowerCase() + '-' : '';
         const filename = `noteflash-${slug}result.png`;
-        const url = 'https://roeesch.github.io/note_flash/';
+        const url = 'https://noteflashmusic.com/';
         const d = _finishData;
         const text = `I scored ${d.totalSec.toFixed(1)}s on Note Flash (${d.gameMode} · ${d.clef} clef)! Can you beat me?`;
         const fullText = `${text} ${url}`;
