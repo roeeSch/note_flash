@@ -1229,6 +1229,20 @@
     // ── PROMO ADS DATA ──────────────────────────────────────────────────────
     const PROMOS = [
       {
+        icon: '⭐',
+        title: 'Enjoying Note Flash?',
+        desc: 'A quick GitHub star helps musicians discover this free tool. It takes 2 seconds!',
+        cta: '★ Star on GitHub',
+        action: () => { window.open('https://github.com/roeeSch/note_flash', '_blank'); }
+      },
+      {
+        icon: '🌟',
+        title: 'Help Us Grow!',
+        desc: 'Note Flash is free & open source. A GitHub star helps us reach more music students.',
+        cta: '★ Give a Star',
+        action: () => { window.open('https://github.com/roeeSch/note_flash', '_blank'); }
+      },
+      {
         icon: '🎵',
         title: 'Try Hearing Mode!',
         desc: 'Listen to the pitch and find the matching note on the staff. Train your ear!',
@@ -1243,20 +1257,6 @@
         action: () => { resetGame(); setClef('bass'); }
       },
       {
-        icon: '🏆',
-        title: 'Challenge a Friend!',
-        desc: 'Share your score card and see who can beat your time.',
-        cta: 'Share Now',
-        action: () => { /* stays on finish screen */ }
-      },
-      {
-        icon: '⭐',
-        title: 'Enjoying Note Flash?',
-        desc: 'Star us on GitHub to help others discover the app!',
-        cta: 'View on GitHub',
-        action: () => { window.open('https://github.com/roeeSch/note_flash', '_blank'); }
-      },
-      {
         icon: '📱',
         title: 'Add to Home Screen',
         desc: 'Install Note Flash as an app for instant access — no download needed!',
@@ -1267,9 +1267,11 @@
 
     function pickPromo() {
       const lastIdx = parseInt(localStorage.getItem('nf_lastPromo') || '-1');
+      // Weight GitHub promos (indices 0,1) higher — 50% chance
+      const weighted = [0, 0, 1, 1, 2, 3, 4];
       let idx;
-      do { idx = Math.floor(Math.random() * PROMOS.length); }
-      while (PROMOS.length > 1 && idx === lastIdx);
+      do { idx = weighted[Math.floor(Math.random() * weighted.length)]; }
+      while (weighted.length > 1 && idx === lastIdx);
       localStorage.setItem('nf_lastPromo', idx);
       return PROMOS[idx];
     }
