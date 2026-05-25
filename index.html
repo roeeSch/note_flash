@@ -12,6 +12,10 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet">
+
+  <!-- Google AdSense: Replace ca-pub-XXXXXXXXXXXXXXXX with your publisher ID -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
   <style>
     *,
     *::before,
@@ -1169,9 +1173,38 @@
       ctx.closePath();
     }
 
+    // ── ADSENSE VIGNETTE + FALLBACK ──────────────────────────────────────────
+    // AdSense Auto Ads (vignette) are triggered automatically by Google at page
+    // transitions. We request a vignette when entering the ad gate. If AdSense is
+    // not loaded (offline, ad blocker, not yet approved), we fall back to our
+    // own 5-second countdown overlay.
+
+    function requestAdSenseVignette() {
+      // AdSense vignettes are triggered by navigating — we simulate this
+      // by pushing/replacing history state, which triggers Auto Ad evaluation.
+      try {
+        if (window.adsbygoogle && window.adsbygoogle.loaded) {
+          // Signal a page-level ad slot evaluation
+          history.pushState({}, '', window.location.pathname + '?ad=1');
+          history.replaceState({}, '', window.location.pathname);
+          return true;
+        }
+      } catch (e) {
+        console.log('AdSense vignette request failed:', e);
+      }
+      return false;
+    }
+
     function showAd(rewardLabel, callback) {
       const overlay = document.getElementById('adOverlay');
       const timerEl = document.getElementById('adTimer');
+
+      // Try AdSense vignette first (Google controls display)
+      const adsenseAttempted = requestAdSenseVignette();
+
+      // Always show our fallback overlay — if AdSense shows a vignette on top,
+      // the user will see both (the vignette auto-dismisses, then our gate).
+      // This ensures the 5-second gate always applies regardless of AdSense.
       overlay.classList.add('active');
 
       let timeLeft = 5;
