@@ -34,6 +34,22 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet">
+
+  <!-- Google AdSense H5 Games Ads -->
+  <script async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5284763232747176"
+    crossorigin="anonymous">
+  </script>
+  <script>
+    window.adsbygoogle = window.adsbygoogle || [];
+    const adConfig = {
+      client: 'ca-pub-5284763232747176',
+      preloadAdBreaks: 'on',
+      sound: 'on',
+    };
+    adsbygoogle.push(adConfig);
+  </script>
+
   <style>
     *,
     *::before,
@@ -1710,6 +1726,38 @@
     }
 
     function showAd(rewardLabel, callback) {
+      // 1. Google AdSense H5 Ads Integration
+      // Check if real Google AdSense H5 Ads SDK has loaded and initialized (is no longer a plain array)
+      if (window.adsbygoogle && !Array.isArray(window.adsbygoogle)) {
+        let callbackCalled = false;
+        const triggerCallback = () => {
+          if (!callbackCalled) {
+            callbackCalled = true;
+            callback();
+          }
+        };
+
+        adsbygoogle.push({
+          showAdBreak: {
+            type: 'rewarded',
+            name: rewardLabel.toLowerCase().replace(/\s+/g, '_'),
+            beforeAd: () => {
+              console.log('AdSense H5 ad starting');
+            },
+            afterAd: () => {
+              console.log('AdSense H5 ad finished');
+              triggerCallback();
+            },
+            adBreakDone: (placementInfo) => {
+              console.log('AdSense H5 ad break done status:', placementInfo ? placementInfo.breakStatus : 'unknown');
+              triggerCallback();
+            }
+          }
+        });
+        return;
+      }
+
+      // 2. Fallback local promo cards (if AdSense SDK is not loaded or blocked)
       const overlay = document.getElementById('adOverlay');
       const timerEl = document.getElementById('adTimer');
 
